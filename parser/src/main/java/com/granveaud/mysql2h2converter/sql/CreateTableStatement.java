@@ -1,8 +1,8 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
-
 import java.util.List;
+
+import com.google.common.base.Joiner;
 
 /*
 CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
@@ -103,15 +103,24 @@ public class CreateTableStatement implements Statement {
     private String tableName;
     private CreateTableDefinition definition;
     private List<CreateTableOption> options;
-// TODO
-//    private SelectStatement selectStatement;
 
-    public CreateTableStatement(boolean temporary, boolean ifNotExists, String tableName, CreateTableDefinition definition, List<CreateTableOption> options) {
+    // db name
+    private String databaseName;
+
+    // TODO
+    //    private SelectStatement selectStatement;
+
+    public CreateTableStatement(boolean temporary, boolean ifNotExists, String tableName,
+                                CreateTableDefinition definition, List<CreateTableOption> options) {
         this.temporary = temporary;
         this.ifNotExists = ifNotExists;
         this.tableName = tableName;
         this.definition = definition;
         this.options = options;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
     }
 
     public String getTableName() {
@@ -132,10 +141,17 @@ public class CreateTableStatement implements Statement {
 
     @Override
     public String toString() {
-        return "CREATE" + (temporary ? " TEMPORARY" : "") + " TABLE" + (ifNotExists ? " IF NOT EXISTS" : "") +
-                " " + tableName + (definition != null ? " (" + definition + ")" : "") +
+        return "CREATE" + (temporary ? " TEMPORARY" : "") + " "
+                + "TABLE" +
+                (ifNotExists ? " IF "
+                        + "NOT "
+                        + "EXISTS" : "") +
+                " " + (this.databaseName != null ? this.databaseName + "." : "") + tableName +
+                (definition != null ? " "
+                        + "(" +
+                        definition + ")" : "") +
                 (options != null ? " " + Joiner.on(' ').join(options) : "")
-//                (selectStatement != null ? selectStatement.toString() : "")
+                //                (selectStatement != null ? selectStatement.toString() : "")
                 ;
     }
 }

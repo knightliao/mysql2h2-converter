@@ -1,14 +1,46 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import com.google.common.collect.Iterators;
-import com.granveaud.mysql2h2converter.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.granveaud.mysql2h2converter.sql.AlterTableSpecification;
+import com.granveaud.mysql2h2converter.sql.AlterTableStatement;
+import com.granveaud.mysql2h2converter.sql.BinaryValue;
+import com.granveaud.mysql2h2converter.sql.BitFieldValue;
+import com.granveaud.mysql2h2converter.sql.BooleanValue;
+import com.granveaud.mysql2h2converter.sql.ColumnConstraint;
+import com.granveaud.mysql2h2converter.sql.ColumnDefinition;
+import com.granveaud.mysql2h2converter.sql.ColumnName;
+import com.granveaud.mysql2h2converter.sql.CommitTransactionStatement;
+import com.granveaud.mysql2h2converter.sql.CreateDatabaseStatement;
+import com.granveaud.mysql2h2converter.sql.CreateSchemaStatement;
+import com.granveaud.mysql2h2converter.sql.CreateTableStatement;
+import com.granveaud.mysql2h2converter.sql.EmptyStatement;
+import com.granveaud.mysql2h2converter.sql.ExpressionValue;
+import com.granveaud.mysql2h2converter.sql.InsertStatement;
+import com.granveaud.mysql2h2converter.sql.LockTablesStatement;
+import com.granveaud.mysql2h2converter.sql.SetStatement;
+import com.granveaud.mysql2h2converter.sql.SetVariableStatement;
+import com.granveaud.mysql2h2converter.sql.StartTransactionStatement;
+import com.granveaud.mysql2h2converter.sql.Statement;
+import com.granveaud.mysql2h2converter.sql.StringValue;
+import com.granveaud.mysql2h2converter.sql.UnlockTablesStatement;
+import com.granveaud.mysql2h2converter.sql.UseStatement;
+import com.granveaud.mysql2h2converter.sql.Value;
+import com.granveaud.mysql2h2converter.sql.ValueList;
 
 public class H2Converter {
     final static private Logger LOGGER = LoggerFactory.getLogger(H2Converter.class);
+
+    //
+    static String currentDbName = null;
 
     static class ConverterIterator implements Iterator<Statement> {
         private Map<String, Integer> indexNameOccurrences = new HashMap<String, Integer>();
@@ -24,6 +56,7 @@ public class H2Converter {
         }
 
         private void loadNextStatements() {
+
             while (true) {
                 Statement sourceNextStatement = sourceIterator.next();
                 if (sourceNextStatement == null) {
@@ -48,7 +81,8 @@ public class H2Converter {
 
         @Override
         public boolean hasNext() {
-            return (nextStatementIterator != null) || (delayedStatementsIterator != null && delayedStatementsIterator.hasNext());
+            return (nextStatementIterator != null) || (delayedStatementsIterator != null && delayedStatementsIterator
+                    .hasNext());
         }
 
         @Override
@@ -73,23 +107,32 @@ public class H2Converter {
         }
 
         private void convertStatement(Statement sourceStatement, List<Statement> result) {
+
             if (sourceStatement instanceof EmptyStatement) {
                 // ignore empty statements
-            } else if (sourceStatement instanceof LockTablesStatement || sourceStatement instanceof UnlockTablesStatement) {
+            } else if (sourceStatement instanceof LockTablesStatement
+                    || sourceStatement instanceof UnlockTablesStatement) {
                 // do not copy, MySQL specific
+
             } else if (sourceStatement instanceof SetVariableStatement) {
                 // do not copy, SET statement are usually MySQL specific
+
             } else if (sourceStatement instanceof StartTransactionStatement) {
                 // replace with H2 equivalent
                 result.add(new SetStatement("AUTOCOMMIT", Arrays.<Value>asList(new ExpressionValue("OFF"))));
+
             } else if (sourceStatement instanceof CommitTransactionStatement) {
                 // replace with H2 equivalent
                 result.add(new CommitTransactionStatement());
                 result.add(new SetStatement("AUTOCOMMIT", Arrays.<Value>asList(new ExpressionValue("ON"))));
+
             } else if (sourceStatement instanceof UseStatement) {
                 // USE dbName => SET SCHEMA dbName
                 UseStatement useStatement = (UseStatement) sourceStatement;
                 result.add(new SetStatement("SCHEMA", Arrays.<Value>asList(new StringValue(useStatement.getDbName()))));
+
+                // set up db name
+                currentDbName = useStatement.getDbName();
 
             } else if (sourceStatement instanceof CreateDatabaseStatement) {
                 // CREATE DATABASE => CREATE SCHEMA
@@ -97,10 +140,16 @@ public class H2Converter {
                 result.add(new CreateSchemaStatement(createStatement.getDbName(), createStatement.isIfNotExists()));
 
             } else if (sourceStatement instanceof CreateTableStatement) {
+
                 CreateTableStatement createStatement = (CreateTableStatement) sourceStatement;
 
                 // ignore MySQL create table specific options
                 createStatement.setOptions(null);
+
+                // set up db name
+                if (currentDbName != null) {
+                    createStatement.setDatabaseName(currentDbName);
+                }
 
                 // handle duplicate index names in KEY and index names conflicting with reserved keywords
                 handleCreateTableIndexNames(createStatement, indexNameOccurrences);
@@ -133,13 +182,15 @@ public class H2Converter {
             }
         }
 
-        private void handleCreateTableIndexNames(CreateTableStatement createStatement, Map<String, Integer> indexNameOccurrences) {
+        private void handleCreateTableIndexNames(CreateTableStatement createStatement,
+                                                 Map<String, Integer> indexNameOccurrences) {
             for (ColumnConstraint constraint : createStatement.getDefinition().getConstraints()) {
                 if (constraint.getIndexName() != null) {
                     String indexName = DbUtils.unescapeDbObjectName(constraint.getIndexName()).toUpperCase();
 
                     // replace with unique name
-                    Integer occurrence = indexNameOccurrences.containsKey(indexName) ? indexNameOccurrences.get(indexName) : 0;
+                    Integer occurrence =
+                            indexNameOccurrences.containsKey(indexName) ? indexNameOccurrences.get(indexName) : 0;
                     constraint.setIndexName(indexName + "_" + occurrence);
 
                     // increment occurrence for next time
@@ -148,13 +199,15 @@ public class H2Converter {
             }
         }
 
-        private void handleCreateTableConstraints(CreateTableStatement createStatement, List<Statement> delayedStatements) {
+        private void handleCreateTableConstraints(CreateTableStatement createStatement,
+                                                  List<Statement> delayedStatements) {
             Iterator<ColumnConstraint> it = createStatement.getDefinition().getConstraints().iterator();
             while (it.hasNext()) {
                 ColumnConstraint constraint = it.next();
 
                 if (constraint.getType().equals("FOREIGN KEY")) {
-                    delayedStatements.add(new AlterTableStatement(false, createStatement.getTableName(), Arrays.asList(new AlterTableSpecification("ADD", constraint))));
+                    delayedStatements.add(new AlterTableStatement(false, createStatement.getTableName(),
+                            Arrays.asList(new AlterTableSpecification("ADD", constraint))));
                     it.remove();
                 }
 
@@ -209,7 +262,8 @@ public class H2Converter {
                         } else if (bitFieldValue.getBits().equals("0")) {
                             valueList.getValues().set(i, new BooleanValue(false));
                         } else {
-                            LOGGER.warn("Don't know how to convert BitFieldValue " + bitFieldValue.getBits() + " for H2");
+                            LOGGER.warn(
+                                    "Don't know how to convert BitFieldValue " + bitFieldValue.getBits() + " for H2");
                         }
                     }
                 }
