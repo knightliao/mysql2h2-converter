@@ -35,21 +35,23 @@ public class ColumnType {
     private IntegerValue decimals;
     private ValueList valueList;
     private boolean unsigned, zerofill, binary, ascii, unicode;
-	private String charsetName, collationName;
+    private String charsetName, collationName;
 
-	public ColumnType(String name, IntegerValue length, IntegerValue decimals, ValueList valueList, boolean unsigned, boolean zerofill, boolean binary, boolean ascii, boolean unicode, String charsetName, String collationName) {
-		this.name = name;
-		this.length = length;
-		this.decimals = decimals;
-		this.valueList = valueList;
-		this.unsigned = unsigned;
-		this.zerofill = zerofill;
-		this.binary = binary;
-		this.ascii = ascii;
-		this.unicode = unicode;
-		this.charsetName = charsetName;
-		this.collationName = collationName;
-	}
+    public ColumnType(String name, IntegerValue length, IntegerValue decimals, ValueList valueList, boolean unsigned,
+                      boolean zerofill, boolean binary, boolean ascii, boolean unicode, String charsetName,
+                      String collationName) {
+        this.name = name;
+        this.length = length;
+        this.decimals = decimals;
+        this.valueList = valueList;
+        this.unsigned = unsigned;
+        this.zerofill = zerofill;
+        this.binary = binary;
+        this.ascii = ascii;
+        this.unicode = unicode;
+        this.charsetName = charsetName;
+        this.collationName = collationName;
+    }
 
     public String getCharsetName() {
         return charsetName;
@@ -73,6 +75,12 @@ public class ColumnType {
 
     @Override
     public String toString() {
+
+        // double don't export length
+        if (name.equals("double")) {
+            length = null;
+        }
+
         return name + (length != null ? "(" + length + (decimals != null ? "," + decimals : "") + ")" : "") +
                 (valueList != null ? valueList : "") +
                 (unsigned ? " UNSIGNED" : "") +
@@ -80,8 +88,8 @@ public class ColumnType {
                 (binary ? " BINARY" : "") +
                 (ascii ? " ASCII" : "") +
                 (unicode ? " UNICODE" : "") +
-				(charsetName != null ? " CHARACTER SET " + charsetName : "") +
-				(collationName != null ? " COLLATION " + collationName : "");
+                (charsetName != null ? " CHARACTER SET " + charsetName : "") +
+                (collationName != null ? " COLLATION " + collationName : "");
 
     }
 }
