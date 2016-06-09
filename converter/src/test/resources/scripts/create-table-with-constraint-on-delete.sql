@@ -1,4 +1,8 @@
 
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`empty` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `empty`;
+
 CREATE TABLE `user` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   `NAME` text
