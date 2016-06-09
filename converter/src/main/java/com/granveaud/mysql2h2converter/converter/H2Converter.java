@@ -22,6 +22,7 @@ import com.granveaud.mysql2h2converter.sql.CommitTransactionStatement;
 import com.granveaud.mysql2h2converter.sql.CreateDatabaseStatement;
 import com.granveaud.mysql2h2converter.sql.CreateSchemaStatement;
 import com.granveaud.mysql2h2converter.sql.CreateTableStatement;
+import com.granveaud.mysql2h2converter.sql.DropTableStatement;
 import com.granveaud.mysql2h2converter.sql.EmptyStatement;
 import com.granveaud.mysql2h2converter.sql.ExpressionValue;
 import com.granveaud.mysql2h2converter.sql.InsertStatement;
@@ -176,7 +177,18 @@ public class H2Converter {
 
                 result.add(sourceStatement);
 
+            } else if (sourceStatement instanceof DropTableStatement) {
+
+                DropTableStatement dropTableStatement = (DropTableStatement) sourceStatement;
+
+                // set up db name
+                if (currentDbName != null) {
+                    dropTableStatement.setDatabaseName(currentDbName);
+                }
+                result.add(sourceStatement);
+
             } else {
+
                 // general case: add statement unchanged
                 result.add(sourceStatement);
             }
