@@ -149,7 +149,7 @@ public class H2Converter {
 
                 // set up db name
                 if (currentDbName != null) {
-                    createStatement.setDatabaseName(currentDbName);
+                    //createStatement.setDatabaseName(currentDbName);
                 }
 
                 // handle duplicate index names in KEY and index names conflicting with reserved keywords
@@ -183,7 +183,7 @@ public class H2Converter {
 
                 // set up db name
                 if (currentDbName != null) {
-                    dropTableStatement.setDatabaseName(currentDbName);
+                    // dropTableStatement.setDatabaseName(currentDbName);
                 }
                 result.add(sourceStatement);
 
