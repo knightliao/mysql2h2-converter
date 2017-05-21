@@ -1,12 +1,11 @@
 package com.granveaud.mysql2h2converter.parser;
 
-import com.google.common.collect.Lists;
-import com.granveaud.mysql2h2converter.sql.Statement;
+import java.util.Iterator;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Iterator;
-import java.util.List;
+
+import com.granveaud.mysql2h2converter.sql.Statement;
 
 public class SQLParserManager {
     static class ScriptIterator implements Iterator<Statement> {

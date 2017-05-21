@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -17,6 +17,6 @@ public class ValueList {
 
     @Override
 	public String toString() {
-		return "(" + Joiner.on(',').join(values) + ")";
+		return "(" + joinList(values, ",") + ")";
 	}
 }

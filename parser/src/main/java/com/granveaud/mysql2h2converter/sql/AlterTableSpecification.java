@@ -1,6 +1,5 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import java.util.List;
 
 /*
 alter_specification:

@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -24,6 +24,6 @@ public class SetStatement implements Statement {
     @Override
 
     public String toString() {
-        return "SET " + type + " " + Joiner.on(' ').join(values);
+        return "SET " + type + " " + joinList(values, " ");
     }
 }

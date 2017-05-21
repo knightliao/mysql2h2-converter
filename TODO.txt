@@ -1,1 +1,0 @@
-- release a first version in a Maven repository

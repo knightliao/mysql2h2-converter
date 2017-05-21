@@ -1,7 +1,7 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.concat;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -24,6 +24,6 @@ public class CreateTableDefinition {
 
     @Override
     public String toString() {
-        return Joiner.on(',').join(Iterables.concat(columnDefinitions, constraints));
+        return joinList(concat(columnDefinitions, constraints), ",");
     }
 }

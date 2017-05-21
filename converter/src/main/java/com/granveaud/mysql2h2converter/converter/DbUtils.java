@@ -1,11 +1,9 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import com.granveaud.mysql2h2converter.sql.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.granveaud.mysql2h2converter.sql.ExpressionValue;
+import com.granveaud.mysql2h2converter.sql.Value;
 
 public class DbUtils {
-	final static private Logger LOGGER = LoggerFactory.getLogger(H2Converter.class);
 
     public static String unescapeDbObjectName(String str) {
         if (str.startsWith("\"") || str.startsWith("`") || str.startsWith("'")) {

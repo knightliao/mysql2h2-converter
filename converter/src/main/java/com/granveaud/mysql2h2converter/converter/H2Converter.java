@@ -1,41 +1,11 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.granveaud.mysql2h2converter.sql.AlterTableSpecification;
-import com.granveaud.mysql2h2converter.sql.AlterTableStatement;
-import com.granveaud.mysql2h2converter.sql.BinaryValue;
-import com.granveaud.mysql2h2converter.sql.BitFieldValue;
-import com.granveaud.mysql2h2converter.sql.BooleanValue;
-import com.granveaud.mysql2h2converter.sql.ColumnConstraint;
-import com.granveaud.mysql2h2converter.sql.ColumnDefinition;
-import com.granveaud.mysql2h2converter.sql.ColumnName;
-import com.granveaud.mysql2h2converter.sql.CommitTransactionStatement;
-import com.granveaud.mysql2h2converter.sql.CreateDatabaseStatement;
-import com.granveaud.mysql2h2converter.sql.CreateSchemaStatement;
-import com.granveaud.mysql2h2converter.sql.CreateTableStatement;
-import com.granveaud.mysql2h2converter.sql.DropTableStatement;
-import com.granveaud.mysql2h2converter.sql.EmptyStatement;
-import com.granveaud.mysql2h2converter.sql.ExpressionValue;
-import com.granveaud.mysql2h2converter.sql.InsertStatement;
-import com.granveaud.mysql2h2converter.sql.LockTablesStatement;
-import com.granveaud.mysql2h2converter.sql.SetStatement;
-import com.granveaud.mysql2h2converter.sql.SetVariableStatement;
-import com.granveaud.mysql2h2converter.sql.StartTransactionStatement;
-import com.granveaud.mysql2h2converter.sql.Statement;
-import com.granveaud.mysql2h2converter.sql.StringValue;
-import com.granveaud.mysql2h2converter.sql.UnlockTablesStatement;
-import com.granveaud.mysql2h2converter.sql.UseStatement;
-import com.granveaud.mysql2h2converter.sql.Value;
-import com.granveaud.mysql2h2converter.sql.ValueList;
+import com.granveaud.mysql2h2converter.sql.*;
 
 public class H2Converter {
     final static private Logger LOGGER = LoggerFactory.getLogger(H2Converter.class);
@@ -179,7 +149,7 @@ public class H2Converter {
 
             } else if (sourceStatement instanceof DropTableStatement) {
 
-                DropTableStatement dropTableStatement = (DropTableStatement) sourceStatement;
+                // DropTableStatement dropTableStatement = (DropTableStatement) sourceStatement;
 
                 // set up db name
                 if (currentDbName != null) {

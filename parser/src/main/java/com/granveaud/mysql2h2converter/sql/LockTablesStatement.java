@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -18,6 +18,6 @@ public class LockTablesStatement implements Statement {
 
 	@Override
 	public String toString() {
-		return "LOCK TABLES " + Joiner.on(',').join(specifications);
+		return "LOCK TABLES " + joinList(specifications, ",");
 	}
 }

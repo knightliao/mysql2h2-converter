@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -58,9 +58,9 @@ public class InsertStatement implements Statement {
     public String toString() {
         return "INSERT" + (lowPriority ? " LOW_PRIORITY" : "") + (highPriority ? " HIGH_PRIORITY" : "") + (delayed ? " DELAYED" : "") + (ignore ? " IGNORE" : "") + (into ? " INTO" : "") +
 				" " + tableName +
-				(columnNames != null ? " (" + Joiner.on(',').join(columnNames) + ")" : "") +
-				(values != null ? " VALUES " + Joiner.on(',').join(values) : "") +
-				(assignments != null ? " SET " + Joiner.on(',').join(assignments) : "") +
-				(onDuplicateKeyUpdateAssignments != null ? " ON DUPLICATE KEY UPDATE " + Joiner.on(',').join(onDuplicateKeyUpdateAssignments) : "");
+				(columnNames != null ? " (" + joinList(columnNames, ",") + ")" : "") +
+				(values != null ? " VALUES " + joinList(values, ",") : "") +
+				(assignments != null ? " SET " + joinList(assignments, ",") : "") +
+				(onDuplicateKeyUpdateAssignments != null ? " ON DUPLICATE KEY UPDATE " + joinList(onDuplicateKeyUpdateAssignments, ",") : "");
     }
 }

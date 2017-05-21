@@ -1,8 +1,8 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import java.util.List;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
-import com.google.common.base.Joiner;
+import java.util.List;
 
 /*
 CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
@@ -150,7 +150,7 @@ public class CreateTableStatement implements Statement {
                 (definition != null ? " "
                         + "(" +
                         definition + ")" : "") +
-                (options != null ? " " + Joiner.on(' ').join(options) : "")
+                (options != null ? " " + joinList(options, " ") : "")
                 //                (selectStatement != null ? selectStatement.toString() : "")
                 ;
     }
