@@ -1,26 +1,28 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import com.granveaud.mysql2h2converter.parser.ParseException;
-import com.granveaud.mysql2h2converter.parser.SQLParserManager;
-import com.granveaud.mysql2h2converter.sql.Statement;
-import org.junit.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.*;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.*;
-import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.*;
+
+import com.granveaud.mysql2h2converter.parser.ParseException;
+import com.granveaud.mysql2h2converter.parser.SQLParserManager;
+import com.granveaud.mysql2h2converter.sql.Statement;
 
 public class ConverterTest {
 
-    final static private Logger LOGGER = LoggerFactory.getLogger(ConverterTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConverterTest.class);
 
-	@BeforeClass
+ 	@BeforeClass
 	public static void initDriver() {
 		org.h2.Driver.load();
 	}
@@ -38,45 +40,33 @@ public class ConverterTest {
 	}
 
 	@After
-	public void closeConnection() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			LOGGER.warn("Exception while closing connection", e);
-		}
+	public void closeConnection() throws SQLException {
+	    connection.close();
 	}
 
 	private void executeUpdate(String sql) throws SQLException {
-		try {
-			java.sql.Statement sqlStat = connection.createStatement();
+		try (java.sql.Statement sqlStat = connection.createStatement()) {
 			sqlStat.executeUpdate(sql.toString());
-			sqlStat.close();
-		} catch (SQLException e) {
-			LOGGER.warn("Error sql=" + sql, e);
-			throw e;
 		}
 	}
 
 	private List<Map<String, Object>> executeSelect(String sql) throws SQLException {
-		List<Map<String, Object>> result = null;
+	    try (java.sql.Statement sqlStat = connection.createStatement()) {
+	        sqlStat.execute(sql.toString());
+	        try (ResultSet rs = sqlStat.getResultSet()) {
+	            ResultSetMetaData metaData = rs.getMetaData();
 
-		java.sql.Statement sqlStat = connection.createStatement();
-		if (sqlStat.execute(sql.toString())) {
-			ResultSet rs = sqlStat.getResultSet();
-			ResultSetMetaData metaData = rs.getMetaData();
-
-			result = new ArrayList<Map<String, Object>>();
-			while (rs.next()) {
-				Map<String, Object> record = new HashMap<String, Object>();
-				for (int i = 1; i <= metaData.getColumnCount(); i++) {
-					record.put(metaData.getColumnName(i), rs.getObject(i));
-				}
-				result.add(record);
-			}
-		}
-		sqlStat.close();
-
-		return result;
+	            List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+	            while (rs.next()) {
+	                Map<String, Object> record = new HashMap<String, Object>();
+	                for (int i = 1; i <= metaData.getColumnCount(); i++) {
+	                    record.put(metaData.getColumnName(i), rs.getObject(i));
+	                }
+	                result.add(record);
+	            }
+	            return result;
+	        }
+	    }
 	}
 
 	private void executeScript(Reader reader) throws SQLException, ParseException {

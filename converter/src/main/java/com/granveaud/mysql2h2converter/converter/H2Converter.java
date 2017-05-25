@@ -2,16 +2,15 @@ package com.granveaud.mysql2h2converter.converter;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.granveaud.mysql2h2converter.sql.*;
 
 public class H2Converter {
-    final static private Logger LOGGER = LoggerFactory.getLogger(H2Converter.class);
+    private static final Logger LOGGER = LogManager.getLogger(H2Converter.class);
 
-    //
-    static String currentDbName = null;
+    private static String currentDbName = null;
 
     static class ConverterIterator implements Iterator<Statement> {
         private Map<String, Integer> indexNameOccurrences = new HashMap<String, Integer>();
