@@ -6,11 +6,12 @@ import java.util.*;
 import java.io.*;
 import com.granveaud.mysql2h2converter.sql.*;
 
+@SuppressWarnings("unused")
 public class SQLParser implements SQLParserConstants {
 
   final public Token CharLiteral() throws ParseException {Token tk;
- String str;
- Token tk1;
+    String str;
+    Token tk1;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 114:{
       tk = jj_consume_token(114);
@@ -40,7 +41,7 @@ tk1 = new Token(tk.kind, str);
         char c = jj_input_stream.BeginToken();
         while (true) {
             sb.append(c);
-            if (c == delimiter) { // single ou double quote
+            if (c == delimiter) { // single or double quote
                 // if followed by another quote, continue, otherwise we are finished
                 char c2 = jj_input_stream.readChar();
                 if (c2 != delimiter) {
@@ -63,7 +64,6 @@ tk1 = new Token(tk.kind, str);
 
 // parse one statement in a script (terminated by ';')
   final public Statement ScriptStatement() throws ParseException {Statement st = null;
-    Statement st1 = null;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case USE:
     case CREATE:
@@ -78,7 +78,6 @@ tk1 = new Token(tk.kind, str);
     case 116:{
       st = Statement();
       jj_consume_token(116);
-st1 = st;
       break;
       }
     case 0:{
@@ -90,7 +89,7 @@ st1 = st;
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return st1;}
+{if ("" != null) return st;}
     throw new Error("Missing return statement in function");
   }
 
@@ -157,31 +156,31 @@ INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
     [INTO] tbl_name [(col_name,...)]
     {VALUES | VALUE} ({expr | DEFAULT},...),(...),...
     [ ON DUPLICATE KEY UPDATE
-      col_name=expr
-        [, col_name=expr] ... ]
+      col_name = expr
+        [, col_name = expr] ... ]
 Or:
 
 INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
     [INTO] tbl_name
-    SET col_name={expr | DEFAULT}, ...
+    SET col_name = {expr | DEFAULT}, ...
     [ ON DUPLICATE KEY UPDATE
-      col_name=expr
-        [, col_name=expr] ... ]
+      col_name = expr
+        [, col_name = expr] ... ]
 Or:
 
 INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
     [INTO] tbl_name [(col_name,...)]
     SELECT ...
     [ ON DUPLICATE KEY UPDATE
-      col_name=expr
-        [, col_name=expr] ... ]
+      col_name = expr
+        [, col_name = expr] ... ]
 */
   final public Statement InsertStatement() throws ParseException {List<ValueList> valueLists = null;
- String tableName;
- List<String> columnNames = null;
- List<Assignment> assignments = null;
- List<Assignment> onDuplicateKeyUpdateAssignments = null;
- Token tk = null, tk2 = null, tk3 = null, tk4 = null, tk5 = null;
+    String tableName;
+    List<String> columnNames = null;
+    List<Assignment> assignments = null;
+    List<Assignment> onDuplicateKeyUpdateAssignments = null;
+    Token tk = null, tk2 = null, tk3 = null, tk4 = null, tk5 = null;
     jj_consume_token(INSERT);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case LOW_PRIORITY:
@@ -293,7 +292,7 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
       ;
     }
 {if ("" != null) return new InsertStatement(tk != null, tk2 != null, tk3 != null, tk4 != null, tk5 != null, tableName,
-   columnNames, valueLists, assignments, onDuplicateKeyUpdateAssignments);}
+            columnNames, valueLists, assignments, onDuplicateKeyUpdateAssignments);}
     throw new Error("Missing return statement in function");
   }
 
@@ -307,8 +306,8 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
 /*
 ALTER [IGNORE] TABLE tbl_name
     alter_specification [, alter_specification] ...
-    */
-  final public Statement AlterStatement() throws ParseException {Statement st = null;
+*/
+  final public Statement AlterStatement() throws ParseException {Statement st;
     jj_consume_token(ALTER);
     st = AlterTableStatement();
 {if ("" != null) return st;}
@@ -352,25 +351,25 @@ specifications.add(specification);
 
 /*
 alter_specification:
-		| ADD INDEX [index_name] [index_type] (index_col_name,...)
-		| ADD [CONSTRAINT [symbol]]
-		PRIMARY KEY [index_type] (index_col_name,...)
-		| ADD [CONSTRAINT [symbol]]
-		UNIQUE [index_name] [index_type] (index_col_name,...)
-		| ADD [FULLTEXT|SPATIAL] [index_name] (index_col_name,...)
-		| ADD [CONSTRAINT [symbol]]
-		FOREIGN KEY [index_name] (index_col_name,...)
-		[reference_definition]
+        | ADD INDEX [index_name] [index_type] (index_col_name,...)
+        | ADD [CONSTRAINT [symbol]]
+        PRIMARY KEY [index_type] (index_col_name,...)
+        | ADD [CONSTRAINT [symbol]]
+        UNIQUE [index_name] [index_type] (index_col_name,...)
+        | ADD [FULLTEXT|SPATIAL] [index_name] (index_col_name,...)
+        | ADD [CONSTRAINT [symbol]]
+        FOREIGN KEY [index_name] (index_col_name,...)
+        [reference_definition]
 */
   final public AlterTableSpecification AlterTableSpecification() throws ParseException {Token tk;
- ColumnConstraint constraint = null;
+    ColumnConstraint constraint;
     tk = jj_consume_token(ADD);
     constraint = ColumnConstraint();
 {if ("" != null) return new AlterTableSpecification(tk.image, constraint);}
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement CreateStatement() throws ParseException {Statement st = null;
+  final public Statement CreateStatement() throws ParseException {Statement st;
     jj_consume_token(CREATE);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DATABASE:{
@@ -706,13 +705,11 @@ column_definition:
       }
     }
 {if ("" != null) return new ColumnDefinition(columnName, columnType, tk2 != null, tk != null, tk3 != null, tk4 != null, tk5 != null,
-         defaultValue, updateValue, comment, columnReference);}
+                defaultValue, updateValue, comment, columnReference);}
     throw new Error("Missing return statement in function");
   }
 
-/*
-    col_name [(length)] [ASC | DESC]
- */
+/* col_name [(length)] [ASC | DESC] */
   final public ColumnName ColumnName() throws ParseException {String columnName;
     IntegerValue length = null;
     Token tk = null, tk2 = null;
@@ -774,7 +771,7 @@ result.add(columnName);
   }
 
 /*
-TINYINT[(length)] [UNSIGNED] [ZEROFILL]
+    TINYINT[(length)] [UNSIGNED] [ZEROFILL]
   | SMALLINT[(length)] [UNSIGNED] [ZEROFILL]
   | MEDIUMINT[(length)] [UNSIGNED] [ZEROFILL]
   | INT[(length)] [UNSIGNED] [ZEROFILL]
@@ -803,8 +800,7 @@ TINYINT[(length)] [UNSIGNED] [ZEROFILL]
   | SET(value1,value2,value3,...)
     public ColumnType(String name, Integer length, Integer decimals, List<String> values, boolean unsigned, boolean zerofill, boolean binary, boolean ascii, boolean unicode) {
 */
-  final public 
-ColumnType ColumnType() throws ParseException {IntegerValue length = null;
+  final public ColumnType ColumnType() throws ParseException {IntegerValue length = null;
     IntegerValue decimals = null;
     Token tk = null, tk2 = null, tk3 = null, tk4 = null, tk5 = null, tk6 = null;
     ValueList valueList = null;
@@ -1483,7 +1479,7 @@ ColumnType ColumnType() throws ParseException {IntegerValue length = null;
       throw new ParseException();
     }
 {if ("" != null) return new ColumnType(tk.image, length, decimals, valueList, tk2 != null, tk3 != null,
-         tk4 != null, tk5 != null, tk6 != null, charsetName, collationName);}
+               tk4 != null, tk5 != null, tk6 != null, charsetName, collationName);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1498,10 +1494,8 @@ reference_option:
     RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
 
  public ColumnReference(String tableName, List<String> columnNames, boolean matchFull, boolean matchPartial, String onDeleteOption, String onUpdateOption) {
-
- */
-  final public 
-ColumnReference ColumnReference() throws ParseException {String tableName;
+*/
+  final public ColumnReference ColumnReference() throws ParseException {String tableName;
     List<String> columnNames = null;
     Token tk = null, tk2 = null;
     String onDeleteOption = null;
@@ -1565,7 +1559,7 @@ ColumnReference ColumnReference() throws ParseException {String tableName;
       ;
     }
 {if ("" != null) return new ColumnReference(tableName, columnNames, tk != null, tk2 != null,
-            onDeleteOption, onUpdateOption);}
+                onDeleteOption, onUpdateOption);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1621,10 +1615,8 @@ ColumnReference ColumnReference() throws ParseException {String tableName;
   | [CONSTRAINT [symbol]] FOREIGN KEY
         [index_name] (index_col_name,...) [reference_definition]
   | CHECK (expr)
-
  */
-  final public 
-ColumnConstraint ColumnConstraint() throws ParseException {Token tk = null, tk2 = null, tk3 = null, tk4 = null;
+  final public ColumnConstraint ColumnConstraint() throws ParseException {Token tk = null, tk2 = null, tk3 = null, tk4 = null;
     String constraintName = null;
     String indexName = null;
     List<ColumnName> indexColumnNames = null;
@@ -1898,11 +1890,11 @@ ColumnConstraint ColumnConstraint() throws ParseException {Token tk = null, tk2 
       throw new ParseException();
     }
 {if ("" != null) return new ColumnConstraint(tk != null, constraintName, (tk2 != null ? tk2.image : "") + (tk3 != null ? " " + tk3.image : ""),
-            indexColumnNames, (tk4 != null ? tk4.image : null), indexName, reference, checkExpr);}
+                indexColumnNames, (tk4 != null ? tk4.image : null), indexName, reference, checkExpr);}
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement DropStatement() throws ParseException {Statement st = null;
+  final public Statement DropStatement() throws ParseException {Statement st;
     jj_consume_token(DROP);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DATABASE:{
@@ -1973,7 +1965,7 @@ ColumnConstraint ColumnConstraint() throws ParseException {Token tk = null, tk2 
 LOCK TABLES
     tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}
     [, tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}] ...
- */
+*/
   final public Statement LockTablesStatement() throws ParseException {List<LockTablesSpecification> specifications = new ArrayList<LockTablesSpecification>();
     LockTablesSpecification specification;
     jj_consume_token(LOCK);
@@ -2000,7 +1992,7 @@ specifications.add(specification);
   }
 
   final public LockTablesSpecification LockTablesSpecification() throws ParseException {String tableName;
- Token alias = null, tk = null, tk2 = null, tk3 = null, tk4 = null;
+    Token alias = null, tk = null, tk2 = null, tk3 = null, tk4 = null;
     tableName = DbObjectName();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case AS:{
@@ -2092,17 +2084,17 @@ result.add(name);
     throw new Error("Missing return statement in function");
   }
 
-  final public String DbObjectName() throws ParseException {Token tk = null;
-    String tk1 = null;
+  final public String DbObjectName() throws ParseException {Token tk;
+    String str;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case S_IDENTIFIER:{
       tk = jj_consume_token(S_IDENTIFIER);
-tk1 = tk.image;
+str = tk.image;
       break;
       }
     case S_QUOTED_IDENTIFIER:{
       tk = jj_consume_token(S_QUOTED_IDENTIFIER);
-tk1 = tk.image;
+str = tk.image;
       break;
       }
     default:
@@ -2110,11 +2102,11 @@ tk1 = tk.image;
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return tk1;}
+{if ("" != null) return str;}
     throw new Error("Missing return statement in function");
   }
 
-  final public String Identifier() throws ParseException {Token tk = null;
+  final public String Identifier() throws ParseException {Token tk;
     tk = jj_consume_token(S_IDENTIFIER);
 {if ("" != null) return tk.image;}
     throw new Error("Missing return statement in function");
@@ -2140,7 +2132,7 @@ assignments.add(assignment);
   }
 
   final public Assignment Assignment() throws ParseException {String columnName;
- Value value;
+    Value value;
     columnName = DbObjectName();
     jj_consume_token(119);
     value = Value();
@@ -2188,7 +2180,7 @@ values.add(value);
     throw new Error("Missing return statement in function");
   }
 
-  final public Value Value() throws ParseException {Value val = null;
+  final public Value Value() throws ParseException {Value val;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 121:{
       val = JdbcPlaceholderValue();
@@ -2238,14 +2230,14 @@ values.add(value);
     throw new Error("Missing return statement in function");
   }
 
-  final public StringValue StringValue() throws ParseException {Token tk = null;
+  final public StringValue StringValue() throws ParseException {Token tk;
     tk = CharLiteral();
 {if ("" != null) return new StringValue(tk.image);}
     throw new Error("Missing return statement in function");
   }
 
-  final public BinaryValue BinaryValue() throws ParseException {Token tk = null;
-    BinaryValue bv = null;
+  final public BinaryValue BinaryValue() throws ParseException {Token tk;
+    BinaryValue bv;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case S_BINARY_FORMAT1:{
       tk = jj_consume_token(S_BINARY_FORMAT1);
@@ -2266,8 +2258,8 @@ bv = new BinaryValue(BinaryValue.Format.FORMAT2, tk.image.substring(2));
     throw new Error("Missing return statement in function");
   }
 
-  final public BitFieldValue BitFieldValue() throws ParseException {Token tk = null;
-    BitFieldValue bfv = null;
+  final public BitFieldValue BitFieldValue() throws ParseException {Token tk;
+    BitFieldValue bfv;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case S_BIT_FORMAT1:{
       tk = jj_consume_token(S_BIT_FORMAT1);
@@ -2288,13 +2280,13 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     throw new Error("Missing return statement in function");
   }
 
-  final public IntegerValue IntValue() throws ParseException {Token tk = null;
+  final public IntegerValue IntValue() throws ParseException {Token tk;
     tk = jj_consume_token(S_INTEGER);
 {if ("" != null) return new IntegerValue(tk.image);}
     throw new Error("Missing return statement in function");
   }
 
-  final public DoubleValue DoubleValue() throws ParseException {Token tk = null;
+  final public DoubleValue DoubleValue() throws ParseException {Token tk;
     tk = jj_consume_token(S_DOUBLE);
 {if ("" != null) return new DoubleValue(tk.image);}
     throw new Error("Missing return statement in function");
@@ -2312,7 +2304,7 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     throw new Error("Missing return statement in function");
   }
 
-  final public SystemVariableValue SystemVariableValue() throws ParseException {Token tk = null;
+  final public SystemVariableValue SystemVariableValue() throws ParseException {Token tk;
     tk = jj_consume_token(CURRENT_TIMESTAMP);
 {if ("" != null) return new SystemVariableValue(tk.image);}
     throw new Error("Missing return statement in function");
@@ -2364,36 +2356,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     finally { jj_save(4, xla); }
   }
 
-  private boolean jj_3R_27()
- {
-    if (jj_3R_65()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_26()
- {
-    if (jj_3R_64()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25()
- {
-    if (jj_3R_63()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24()
- {
-    if (jj_3R_62()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_23()
- {
-    if (jj_3R_61()) return true;
-    return false;
-  }
-
   private boolean jj_3R_22()
  {
     if (jj_3R_60()) return true;
@@ -2406,15 +2368,15 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_20()
+  private boolean jj_3R_28()
  {
+    if (jj_scan_token(117)) return true;
     if (jj_3R_58()) return true;
     return false;
   }
 
-  private boolean jj_3R_28()
+  private boolean jj_3R_20()
  {
-    if (jj_scan_token(117)) return true;
     if (jj_3R_58()) return true;
     return false;
   }
@@ -2493,13 +2455,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3_4()
- {
-    if (jj_scan_token(120)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
   private boolean jj_3R_15()
  {
     if (jj_3R_18()) return true;
@@ -2510,6 +2465,13 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     if (jj_scan_token(23)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(24)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_4()
+ {
+    if (jj_scan_token(120)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
@@ -2581,12 +2543,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_12()
- {
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
   private boolean jj_3R_11()
  {
     if (jj_3R_15()) return true;
@@ -2596,6 +2552,12 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
       xsp = jj_scanpos;
       if (jj_3R_17()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_12()
+ {
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -2665,15 +2627,15 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_65()
- {
-    if (jj_scan_token(TODO)) return true;
-    return false;
-  }
-
   private boolean jj_3R_84()
  {
     if (jj_scan_token(REFERENCES)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65()
+ {
+    if (jj_scan_token(TODO)) return true;
     return false;
   }
 
@@ -2695,12 +2657,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_57()
- {
-    if (jj_scan_token(121)) return true;
-    return false;
-  }
-
   private boolean jj_3R_76()
  {
     if (jj_scan_token(CHARACTER)) return true;
@@ -2710,6 +2666,12 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
   private boolean jj_3R_78()
  {
     if (jj_scan_token(CHARACTER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_57()
+ {
+    if (jj_scan_token(121)) return true;
     return false;
   }
 
@@ -2755,12 +2717,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_59()
- {
-    if (jj_scan_token(S_DOUBLE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_44()
  {
     if (jj_scan_token(TEXT)) return true;
@@ -2769,6 +2725,18 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     if (jj_3R_78()) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3R_79()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_74()
+ {
+    if (jj_scan_token(117)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_75()
+ {
+    if (jj_scan_token(117)) return true;
     return false;
   }
 
@@ -2783,15 +2751,9 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_74()
+  private boolean jj_3R_59()
  {
-    if (jj_scan_token(117)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_75()
- {
-    if (jj_scan_token(117)) return true;
+    if (jj_scan_token(S_DOUBLE)) return true;
     return false;
   }
 
@@ -2819,6 +2781,12 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
+  private boolean jj_3R_68()
+ {
+    if (jj_scan_token(117)) return true;
+    return false;
+  }
+
   private boolean jj_3R_42()
  {
     if (jj_scan_token(VARCHAR)) return true;
@@ -2826,7 +2794,7 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_68()
+  private boolean jj_3R_67()
  {
     if (jj_scan_token(117)) return true;
     return false;
@@ -2839,19 +2807,19 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
+  private boolean jj_3R_70()
+ {
+    if (jj_scan_token(117)) return true;
+    return false;
+  }
+
   private boolean jj_3R_58()
  {
     if (jj_scan_token(S_INTEGER)) return true;
     return false;
   }
 
-  private boolean jj_3R_67()
- {
-    if (jj_scan_token(117)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_70()
+  private boolean jj_3R_66()
  {
     if (jj_scan_token(117)) return true;
     return false;
@@ -2871,12 +2839,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_89()
- {
-    if (jj_scan_token(S_BIT_FORMAT2)) return true;
-    return false;
-  }
-
   private boolean jj_3R_38()
  {
     if (jj_scan_token(FLOAT)) return true;
@@ -2887,12 +2849,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     if (jj_scan_token(27)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(28)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_88()
- {
-    if (jj_scan_token(S_BIT_FORMAT1)) return true;
     return false;
   }
 
@@ -2909,9 +2865,9 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_66()
+  private boolean jj_3R_89()
  {
-    if (jj_scan_token(117)) return true;
+    if (jj_scan_token(S_BIT_FORMAT2)) return true;
     return false;
   }
 
@@ -2925,6 +2881,12 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     if (jj_scan_token(27)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(28)) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_88()
+ {
+    if (jj_scan_token(S_BIT_FORMAT1)) return true;
     return false;
   }
 
@@ -2980,17 +2942,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
-  private boolean jj_3R_62()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_88()) {
-    jj_scanpos = xsp;
-    if (jj_3R_89()) return true;
-    }
-    return false;
-  }
-
   private boolean jj_3R_31()
  {
     if (jj_scan_token(SMALLINT)) return true;
@@ -3017,6 +2968,17 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
+  private boolean jj_3R_62()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_88()) {
+    jj_scanpos = xsp;
+    if (jj_3R_89()) return true;
+    }
+    return false;
+  }
+
   private boolean jj_3R_29()
  {
     if (jj_scan_token(BIT)) return true;
@@ -3027,18 +2989,6 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     if (jj_scan_token(27)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(28)) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_87()
- {
-    if (jj_scan_token(S_BINARY_FORMAT2)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_86()
- {
-    if (jj_scan_token(S_BINARY_FORMAT1)) return true;
     return false;
   }
 
@@ -3131,6 +3081,18 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     return false;
   }
 
+  private boolean jj_3R_87()
+ {
+    if (jj_scan_token(S_BINARY_FORMAT2)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_86()
+ {
+    if (jj_scan_token(S_BINARY_FORMAT1)) return true;
+    return false;
+  }
+
   private boolean jj_3R_61()
  {
     Token xsp;
@@ -3145,6 +3107,36 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
   private boolean jj_3R_60()
  {
     if (jj_3R_85()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27()
+ {
+    if (jj_3R_65()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26()
+ {
+    if (jj_3R_64()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25()
+ {
+    if (jj_3R_63()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24()
+ {
+    if (jj_3R_62()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23()
+ {
+    if (jj_3R_61()) return true;
     return false;
   }
 

@@ -3,7 +3,7 @@
 package com.granveaud.mysql2h2converter.parser;
 
 /** Token Manager. */
-@SuppressWarnings("unused")public class SQLParserTokenManager implements SQLParserConstants {
+public class SQLParserTokenManager implements SQLParserConstants {
 
   /** Debug output. */
   public  java.io.PrintStream debugStream = System.out;
