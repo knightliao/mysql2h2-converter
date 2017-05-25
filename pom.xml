@@ -70,13 +70,13 @@
                             <goals>
                                 <goal>javacc</goal>
                             </goals>
-                            <configuration>
-                                <packageName>com.granveaud.mysql2h2converter.parser</packageName>
-                                <sourceDirectory>src/main/java/com/granveaud/mysql2h2converter/parser</sourceDirectory>
-                                <outputDirectory>${project.build.directory}/generated-sources/javacc1</outputDirectory>
-                            </configuration>
                         </execution>
                     </executions>
+		    <configuration>
+                        <packageName>com.granveaud.mysql2h2converter.parser</packageName>
+                        <sourceDirectory>${basedir}/src/main/java/com/granveaud/mysql2h2converter/parser</sourceDirectory>
+                        <outputDirectory>${basedir}/src/main/java/</outputDirectory>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
