@@ -154,11 +154,18 @@ Token CharLiteral():
 {
 	Token tk;
 	String str;
+	Token tk1;
 }
 {
-    tk="'" str=parseStringValue((char) 0x27) { return new Token(tk.kind, str); }
-    | tk="\"" str=parseStringValue((char) 0x22) { return new Token(tk.kind, str); }
+    (
+        tk="'" str=parseStringValue((char) 0x27) { tk1 = new Token(tk.kind, str); }
+      | tk="\"" str=parseStringValue((char) 0x22) { tk1 = new Token(tk.kind, str); }
+    )
 //    | tk=<S_QUOTED_IDENTIFIER> { return tk; }
+    {
+        return tk1;
+    }
+
 }
 
 JAVACODE
@@ -195,10 +202,16 @@ String parseStringValue(char delimiter) throws ParseException {
 Statement ScriptStatement():
 {
     Statement st = null;
+    Statement st1 = null;
 }
 {
-    (st=Statement() ";") { return st; }
-    | <EOF> { return null; }
+    (
+        (st=Statement() ";") { st1 = st; }
+        | <EOF>
+    )
+    {
+        return st1;
+    }
 }
 
 // parse one statement (without trailing ';')
@@ -208,17 +221,17 @@ Statement Statement():
 }
 {
     (
-        st=UseStatement()
-        | st=SetVariableStatement()
-        | st=CreateStatement()
-        | st=AlterStatement()
-        | st=DropStatement()
-        | st=InsertStatement()
-        | st=LockTablesStatement()
-        | st=UnlockTablesStatement()
-        | st=StartTransactionStatement()
-        | st=CommitTransactionStatement()
-        | { st=new EmptyStatement(); }
+          ( st = UseStatement() )
+        | ( st = SetVariableStatement() ) 
+        | ( st = CreateStatement() )
+        | ( st = AlterStatement() )
+        | ( st = DropStatement() )
+        | ( st = InsertStatement() )
+        | ( st = LockTablesStatement() )
+        | ( st = UnlockTablesStatement() )
+        | ( st = StartTransactionStatement() )
+        | ( st = CommitTransactionStatement() )
+        | ( { st = new EmptyStatement(); } ) 
     )
     {
         return st;
@@ -230,7 +243,9 @@ Statement SetVariableStatement():
 	Assignment assignment;
 }
 {
-	<SET> assignment=Assignment()
+    (
+	    <SET> assignment=Assignment()
+	)
 	{
 		return new SetVariableStatement(assignment);
 	}
@@ -829,12 +844,16 @@ List<String> DbObjectNames():
 String DbObjectName():
 {
     Token tk = null;
+    String tk1 = null;
 }
 {
 	(
-	    tk=<S_IDENTIFIER> { return tk.image; }
-	    | tk=<S_QUOTED_IDENTIFIER> { return tk.image; }
+	    tk=<S_IDENTIFIER> { tk1 = tk.image; }
+	    | tk=<S_QUOTED_IDENTIFIER> { tk1 = tk.image; }
 	)
+	{
+	    return tk1;
+	}
 }
 
 String Identifier():
@@ -944,19 +963,31 @@ StringValue StringValue():
 BinaryValue BinaryValue():
 {
     Token tk = null;
+    BinaryValue bv = null;
 }
 {
-     tk=<S_BINARY_FORMAT1> { return new BinaryValue(BinaryValue.Format.FORMAT1, tk.image.substring(2, tk.image.length() - 1)); }
-|    tk=<S_BINARY_FORMAT2> { return new BinaryValue(BinaryValue.Format.FORMAT2, tk.image.substring(2)); }
+     (
+         tk=<S_BINARY_FORMAT1> { bv = new BinaryValue(BinaryValue.Format.FORMAT1, tk.image.substring(2, tk.image.length() - 1)); }
+       | tk=<S_BINARY_FORMAT2> { bv = new BinaryValue(BinaryValue.Format.FORMAT2, tk.image.substring(2)); }
+     )
+     {
+         return bv;
+     }
 }
 
 BitFieldValue BitFieldValue():
 {
     Token tk = null;
+    BitFieldValue bfv = null;
 }
 {
-     tk=<S_BIT_FORMAT1> { return new BitFieldValue(BitFieldValue.Format.FORMAT1, tk.image.substring(2, tk.image.length() - 1)); }
-|    tk=<S_BIT_FORMAT2> { return new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2)); }
+     (
+         tk=<S_BIT_FORMAT1> { bfv = new BitFieldValue(BitFieldValue.Format.FORMAT1, tk.image.substring(2, tk.image.length() - 1)); }
+       | tk=<S_BIT_FORMAT2> { bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2)); }
+     )
+     {
+         return bfv;
+     }
 }
 
 IntegerValue IntValue():
@@ -975,17 +1006,15 @@ DoubleValue DoubleValue():
     tk=<S_DOUBLE> { return new DoubleValue(tk.image); }
 }
 
-NullValue NullValue():
+NullValue NullValue(): 
 {
-    Token tk = null;
 }
 {
-    tk=<NULL> { return new NullValue(); }
+    <NULL> { return new NullValue(); }
 }
 
 JdbcPlaceholderValue JdbcPlaceholderValue():
 {
-    Token tk = null;
 }
 {
     "?" { return new JdbcPlaceholderValue(); }
