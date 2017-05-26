@@ -131,6 +131,10 @@ public class CreateTableStatement implements Statement {
         return definition;
     }
 
+    public List<CreateTableOption> getOptions() {
+        return options;
+    }
+
     public void setOptions(List<CreateTableOption> options) {
         this.options = options;
     }

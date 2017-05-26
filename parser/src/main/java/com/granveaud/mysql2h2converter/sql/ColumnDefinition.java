@@ -36,6 +36,10 @@ public class ColumnDefinition {
         this.updateValue = updateValue;
     }
 
+    public Value getUpdateValue() {
+        return updateValue;
+    }
+
     @Override
     public String toString() {
         return columnName.toString() + " " + columnType +
