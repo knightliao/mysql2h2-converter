@@ -6,7 +6,6 @@ import java.util.*;
 import java.io.*;
 import com.granveaud.mysql2h2converter.sql.*;
 
-@SuppressWarnings("unused")
 public class SQLParser implements SQLParserConstants {
 
   final public Token CharLiteral() throws ParseException {Token tk;
@@ -30,8 +29,7 @@ tk1 = new Token(tk.kind, str);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return tk1;}
-    throw new Error("Missing return statement in function");
+return tk1;
   }
 
   String parseStringValue(char delimiter) throws ParseException, ParseException {StringBuilder sb = new StringBuilder();
@@ -89,8 +87,7 @@ tk1 = new Token(tk.kind, str);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return st;}
-    throw new Error("Missing return statement in function");
+return st;
   }
 
 // parse one statement (without trailing ';')
@@ -140,15 +137,13 @@ tk1 = new Token(tk.kind, str);
       jj_la1[2] = jj_gen;
 st = new EmptyStatement();
     }
-{if ("" != null) return st;}
-    throw new Error("Missing return statement in function");
+return st;
   }
 
   final public SqlStatement SetVariableStatement() throws ParseException {Assignment assignment;
     jj_consume_token(SET);
     assignment = Assignment();
-{if ("" != null) return new SetVariableStatement(assignment);}
-    throw new Error("Missing return statement in function");
+return new SetVariableStatement(assignment);
   }
 
 /*
@@ -291,16 +286,14 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
       jj_la1[11] = jj_gen;
       ;
     }
-{if ("" != null) return new InsertStatement(tk != null, tk2 != null, tk3 != null, tk4 != null, tk5 != null, tableName,
-            columnNames, valueLists, assignments, onDuplicateKeyUpdateAssignments);}
-    throw new Error("Missing return statement in function");
+return new InsertStatement(tk != null, tk2 != null, tk3 != null, tk4 != null, tk5 != null, tableName,
+            columnNames, valueLists, assignments, onDuplicateKeyUpdateAssignments);
   }
 
   final public SqlStatement UseStatement() throws ParseException {String dbName;
     jj_consume_token(USE);
     dbName = DbObjectName();
-{if ("" != null) return new UseStatement(dbName);}
-    throw new Error("Missing return statement in function");
+return new UseStatement(dbName);
   }
 
 /*
@@ -310,8 +303,7 @@ ALTER [IGNORE] TABLE tbl_name
   final public SqlStatement AlterStatement() throws ParseException {SqlStatement st;
     jj_consume_token(ALTER);
     st = AlterTableStatement();
-{if ("" != null) return st;}
-    throw new Error("Missing return statement in function");
+return st;
   }
 
   final public SqlStatement AlterTableStatement() throws ParseException {Token tk = null;
@@ -345,8 +337,7 @@ specifications.add(specification);
       specification = AlterTableSpecification();
 specifications.add(specification);
     }
-{if ("" != null) return new AlterTableStatement(tk != null, tableName, specifications);}
-    throw new Error("Missing return statement in function");
+return new AlterTableStatement(tk != null, tableName, specifications);
   }
 
 /*
@@ -365,8 +356,7 @@ alter_specification:
     ColumnConstraint constraint;
     tk = jj_consume_token(ADD);
     constraint = ColumnConstraint();
-{if ("" != null) return new AlterTableSpecification(tk.image, constraint);}
-    throw new Error("Missing return statement in function");
+return new AlterTableSpecification(tk.image, constraint);
   }
 
   final public SqlStatement CreateStatement() throws ParseException {SqlStatement st;
@@ -386,8 +376,7 @@ alter_specification:
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return st;}
-    throw new Error("Missing return statement in function");
+return st;
   }
 
   final public SqlStatement CreateDatabaseStatement() throws ParseException {Token tk = null;
@@ -405,8 +394,7 @@ alter_specification:
       ;
     }
     dbName = DbObjectName();
-{if ("" != null) return new CreateDatabaseStatement(dbName, tk != null);}
-    throw new Error("Missing return statement in function");
+return new CreateDatabaseStatement(dbName, tk != null);
   }
 
 /*CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
@@ -461,8 +449,7 @@ alter_specification:
       jj_la1[19] = jj_gen;
       ;
     }
-{if ("" != null) return new CreateTableStatement(tk != null, tk2 != null, tableName, definition, options);}
-    throw new Error("Missing return statement in function");
+return new CreateTableStatement(tk != null, tk2 != null, tableName, definition, options);
   }
 
   final public List<CreateTableOption> CreateTableOptions() throws ParseException {List<CreateTableOption> result = new ArrayList<CreateTableOption>();
@@ -486,8 +473,7 @@ result.add(option);
       option = CreateTableOption();
 result.add(option);
     }
-{if ("" != null) return result;}
-    throw new Error("Missing return statement in function");
+return result;
   }
 
   final public CreateTableOption CreateTableOption() throws ParseException {Token tk1 = null, tk2 = null;
@@ -541,8 +527,7 @@ result.add(option);
       jj_la1[23] = jj_gen;
       ;
     }
-{if ("" != null) return new CreateTableOption(tk1.image, tk2 != null ? tk2.image : null);}
-    throw new Error("Missing return statement in function");
+return new CreateTableOption(tk1.image, tk2 != null ? tk2.image : null);
   }
 
   final public CreateTableDefinition CreateTableDefinition() throws ParseException {List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
@@ -612,8 +597,7 @@ columnConstraints.add(columnConstraint);
       }
     }
     jj_consume_token(118);
-{if ("" != null) return new CreateTableDefinition(columnDefinitions, columnConstraints);}
-    throw new Error("Missing return statement in function");
+return new CreateTableDefinition(columnDefinitions, columnConstraints);
   }
 
 /*
@@ -704,9 +688,8 @@ column_definition:
         throw new ParseException();
       }
     }
-{if ("" != null) return new ColumnDefinition(columnName, columnType, tk2 != null, tk != null, tk3 != null, tk4 != null, tk5 != null,
-                defaultValue, updateValue, comment, columnReference);}
-    throw new Error("Missing return statement in function");
+return new ColumnDefinition(columnName, columnType, tk2 != null, tk != null, tk3 != null, tk4 != null, tk5 != null,
+                defaultValue, updateValue, comment, columnReference);
   }
 
 /* col_name [(length)] [ASC | DESC] */
@@ -743,8 +726,7 @@ column_definition:
       jj_la1[32] = jj_gen;
       ;
     }
-{if ("" != null) return new ColumnName(columnName, length, tk != null, tk2 != null);}
-    throw new Error("Missing return statement in function");
+return new ColumnName(columnName, length, tk != null, tk2 != null);
   }
 
   final public List<ColumnName> ColumnNames() throws ParseException {List<ColumnName> result = new ArrayList<ColumnName>();
@@ -766,8 +748,7 @@ result.add(columnName);
       columnName = ColumnName();
 result.add(columnName);
     }
-{if ("" != null) return result;}
-    throw new Error("Missing return statement in function");
+return result;
   }
 
 /*
@@ -1478,9 +1459,8 @@ result.add(columnName);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return new ColumnType(tk.image, length, decimals, valueList, tk2 != null, tk3 != null,
-               tk4 != null, tk5 != null, tk6 != null, charsetName, collationName);}
-    throw new Error("Missing return statement in function");
+return new ColumnType(tk.image, length, decimals, valueList, tk2 != null, tk3 != null,
+               tk4 != null, tk5 != null, tk6 != null, charsetName, collationName);
   }
 
 /*
@@ -1558,9 +1538,8 @@ reference_option:
       jj_la1[93] = jj_gen;
       ;
     }
-{if ("" != null) return new ColumnReference(tableName, columnNames, tk != null, tk2 != null,
-                onDeleteOption, onUpdateOption);}
-    throw new Error("Missing return statement in function");
+return new ColumnReference(tableName, columnNames, tk != null, tk2 != null,
+                onDeleteOption, onUpdateOption);
   }
 
   final public String ReferenceOption() throws ParseException {Token tk = null, tk2 = null;
@@ -1601,8 +1580,7 @@ reference_option:
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return tk.image + (tk2 != null ? " " + tk2.image : "");}
-    throw new Error("Missing return statement in function");
+return tk.image + (tk2 != null ? " " + tk2.image : "");
   }
 
 /*
@@ -1889,9 +1867,8 @@ reference_option:
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return new ColumnConstraint(tk != null, constraintName, (tk2 != null ? tk2.image : "") + (tk3 != null ? " " + tk3.image : ""),
-                indexColumnNames, (tk4 != null ? tk4.image : null), indexName, reference, checkExpr);}
-    throw new Error("Missing return statement in function");
+return new ColumnConstraint(tk != null, constraintName, (tk2 != null ? tk2.image : "") + (tk3 != null ? " " + tk3.image : ""),
+                indexColumnNames, (tk4 != null ? tk4.image : null), indexName, reference, checkExpr);
   }
 
   final public SqlStatement DropStatement() throws ParseException {SqlStatement st;
@@ -1911,8 +1888,7 @@ reference_option:
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return st;}
-    throw new Error("Missing return statement in function");
+return st;
   }
 
   final public SqlStatement DropDatabaseStatement() throws ParseException {Token tk = null;
@@ -1929,8 +1905,7 @@ reference_option:
       ;
     }
     dbName = DbObjectName();
-{if ("" != null) return new DropDatabaseStatement(dbName, tk != null);}
-    throw new Error("Missing return statement in function");
+return new DropDatabaseStatement(dbName, tk != null);
   }
 
   final public SqlStatement DropTableStatement() throws ParseException {Token tk = null;
@@ -1957,8 +1932,7 @@ reference_option:
       ;
     }
     tableNames = DbObjectNames();
-{if ("" != null) return new DropTableStatement(tk != null, tk2 != null, tableNames);}
-    throw new Error("Missing return statement in function");
+return new DropTableStatement(tk != null, tk2 != null, tableNames);
   }
 
 /*
@@ -1987,8 +1961,7 @@ specifications.add(specification);
       specification = LockTablesSpecification();
 specifications.add(specification);
     }
-{if ("" != null) return new LockTablesStatement(specifications);}
-    throw new Error("Missing return statement in function");
+return new LockTablesStatement(specifications);
   }
 
   final public LockTablesSpecification LockTablesSpecification() throws ParseException {String tableName;
@@ -2037,28 +2010,24 @@ specifications.add(specification);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return new LockTablesSpecification(tableName, alias != null ? alias.image : null, tk != null, tk2 != null, tk3 != null, tk4 != null);}
-    throw new Error("Missing return statement in function");
+return new LockTablesSpecification(tableName, alias != null ? alias.image : null, tk != null, tk2 != null, tk3 != null, tk4 != null);
   }
 
   final public SqlStatement UnlockTablesStatement() throws ParseException {
     jj_consume_token(UNLOCK);
     jj_consume_token(TABLES);
-{if ("" != null) return new UnlockTablesStatement();}
-    throw new Error("Missing return statement in function");
+return new UnlockTablesStatement();
   }
 
   final public SqlStatement StartTransactionStatement() throws ParseException {
     jj_consume_token(START);
     jj_consume_token(TRANSACTION);
-{if ("" != null) return new StartTransactionStatement();}
-    throw new Error("Missing return statement in function");
+return new StartTransactionStatement();
   }
 
   final public SqlStatement CommitTransactionStatement() throws ParseException {
     jj_consume_token(COMMIT);
-{if ("" != null) return new CommitTransactionStatement();}
-    throw new Error("Missing return statement in function");
+return new CommitTransactionStatement();
   }
 
   final public List<String> DbObjectNames() throws ParseException {List<String> result = new ArrayList<String>();
@@ -2080,8 +2049,7 @@ result.add(name);
       name = DbObjectName();
 result.add(name);
     }
-{if ("" != null) return result;}
-    throw new Error("Missing return statement in function");
+return result;
   }
 
   final public String DbObjectName() throws ParseException {Token tk;
@@ -2102,14 +2070,12 @@ str = tk.image;
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return str;}
-    throw new Error("Missing return statement in function");
+return str;
   }
 
   final public String Identifier() throws ParseException {Token tk;
     tk = jj_consume_token(S_IDENTIFIER);
-{if ("" != null) return tk.image;}
-    throw new Error("Missing return statement in function");
+return tk.image;
   }
 
   final public List<Assignment> Assignments() throws ParseException {List<Assignment> assignments = new ArrayList<Assignment>();
@@ -2127,8 +2093,7 @@ assignments.add(assignment);
       assignment = Assignment();
 assignments.add(assignment);
     }
-{if ("" != null) return assignments;}
-    throw new Error("Missing return statement in function");
+return assignments;
   }
 
   final public Assignment Assignment() throws ParseException {String columnName;
@@ -2136,8 +2101,7 @@ assignments.add(assignment);
     columnName = DbObjectName();
     jj_consume_token(119);
     value = Value();
-{if ("" != null) return new Assignment(columnName, value);}
-    throw new Error("Missing return statement in function");
+return new Assignment(columnName, value);
   }
 
   final public List<ValueList> MultiValueList() throws ParseException {List<ValueList> result = new ArrayList<ValueList>();
@@ -2155,8 +2119,7 @@ result.add(valueList);
       valueList = ValueList();
 result.add(valueList);
     }
-{if ("" != null) return result;}
-    throw new Error("Missing return statement in function");
+return result;
   }
 
   final public ValueList ValueList() throws ParseException {List<Value> values = new ArrayList<Value>();
@@ -2176,8 +2139,7 @@ values.add(value);
 values.add(value);
     }
     jj_consume_token(118);
-{if ("" != null) return new ValueList(values);}
-    throw new Error("Missing return statement in function");
+return new ValueList(values);
   }
 
   final public Value Value() throws ParseException {Value val;
@@ -2226,14 +2188,12 @@ values.add(value);
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return val;}
-    throw new Error("Missing return statement in function");
+return val;
   }
 
   final public StringValue StringValue() throws ParseException {Token tk;
     tk = CharLiteral();
-{if ("" != null) return new StringValue(tk.image);}
-    throw new Error("Missing return statement in function");
+return new StringValue(tk.image);
   }
 
   final public BinaryValue BinaryValue() throws ParseException {Token tk;
@@ -2254,8 +2214,7 @@ bv = new BinaryValue(BinaryValue.Format.FORMAT2, tk.image.substring(2));
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return bv;}
-    throw new Error("Missing return statement in function");
+return bv;
   }
 
   final public BitFieldValue BitFieldValue() throws ParseException {Token tk;
@@ -2276,44 +2235,37 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
       jj_consume_token(-1);
       throw new ParseException();
     }
-{if ("" != null) return bfv;}
-    throw new Error("Missing return statement in function");
+return bfv;
   }
 
   final public IntegerValue IntValue() throws ParseException {Token tk;
     tk = jj_consume_token(S_INTEGER);
-{if ("" != null) return new IntegerValue(tk.image);}
-    throw new Error("Missing return statement in function");
+return new IntegerValue(tk.image);
   }
 
   final public DoubleValue DoubleValue() throws ParseException {Token tk;
     tk = jj_consume_token(S_DOUBLE);
-{if ("" != null) return new DoubleValue(tk.image);}
-    throw new Error("Missing return statement in function");
+return new DoubleValue(tk.image);
   }
 
   final public NullValue NullValue() throws ParseException {
     jj_consume_token(NULL);
-{if ("" != null) return new NullValue();}
-    throw new Error("Missing return statement in function");
+return new NullValue();
   }
 
   final public JdbcPlaceholderValue JdbcPlaceholderValue() throws ParseException {
     jj_consume_token(121);
-{if ("" != null) return new JdbcPlaceholderValue();}
-    throw new Error("Missing return statement in function");
+return new JdbcPlaceholderValue();
   }
 
   final public SystemVariableValue SystemVariableValue() throws ParseException {Token tk;
     tk = jj_consume_token(CURRENT_TIMESTAMP);
-{if ("" != null) return new SystemVariableValue(tk.image);}
-    throw new Error("Missing return statement in function");
+return new SystemVariableValue(tk.image);
   }
 
   final public ExpressionValue ExpressionValue() throws ParseException {
     jj_consume_token(TODO);
-{if ("" != null) return new ExpressionValue("TODO");}
-    throw new Error("Missing return statement in function");
+return new ExpressionValue("TODO");
   }
 
   private boolean jj_2_1(int xla)
@@ -3178,38 +3130,8 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
-  /** Constructor with InputStream. */
-  public SQLParser(java.io.InputStream stream) {
-     this(stream, null);
-  }
-  /** Constructor with InputStream and supplied encoding */
-  public SQLParser(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    token_source = new SQLParserTokenManager(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 132; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-  }
-
-  /** Reinitialise. */
-  public void ReInit(java.io.InputStream stream) {
-     ReInit(stream, null);
-  }
-  /** Reinitialise. */
-  public void ReInit(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
-    token_source.ReInit(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 132; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-  }
-
   /** Constructor. */
-  public SQLParser(java.io.Reader stream) {
+  public SQLParser(Provider stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new SQLParserTokenManager(jj_input_stream);
     token = new Token();
@@ -3219,9 +3141,17 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Constructor. */
+  public SQLParser(String dsl) throws ParseException, TokenMgrException {
+      this(new StringProvider(dsl));
+  }
+
+  public void ReInit(String s) {
+     ReInit(new StringProvider(s));
+  }
   /** Reinitialise. */
-  public void ReInit(java.io.Reader stream) {
-    if (jj_input_stream == null) {
+  public void ReInit(Provider stream) {
+	if (jj_input_stream == null) {
       jj_input_stream = new SimpleCharStream(stream, 1, 1);
    } else {
       jj_input_stream.ReInit(stream, 1, 1);
@@ -3283,7 +3213,7 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
   }
 
   @SuppressWarnings("serial")
-  static private final class LookaheadSuccess extends java.lang.Error { }
+  static private final class LookaheadSuccess extends java.lang.RuntimeException { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
@@ -3417,7 +3347,7 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
     for (int i = 0; i < jj_expentries.size(); i++) {
       exptokseq[i] = jj_expentries.get(i);
     }
-    return new ParseException(token, exptokseq, tokenImage);
+    return new ParseException(token, exptokseq, tokenImage, token_source == null ? null : SQLParserTokenManager.lexStateNames[token_source.curLexState]);
   }
 
   /** Enable tracing. */

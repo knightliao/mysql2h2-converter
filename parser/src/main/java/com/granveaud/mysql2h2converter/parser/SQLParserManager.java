@@ -49,12 +49,12 @@ public class SQLParserManager {
     }
 
     public static SqlStatement parseStatement(Reader reader) throws ParseException {
-        SQLParser parser = new SQLParser(reader);
+        SQLParser parser = new SQLParser(new ReaderProvider(reader));
         return parser.Statement();
     }
 
     public static Iterator<SqlStatement> parseScript(Reader reader) throws ParseException {
-        SQLParser parser = new SQLParser(reader);
+        SQLParser parser = new SQLParser(new ReaderProvider(reader));
         return new ScriptIterator(parser);
     }
 }
