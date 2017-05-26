@@ -2,7 +2,7 @@ package com.granveaud.mysql2h2converter.converter;
 
 import com.granveaud.mysql2h2converter.parser.ParseException;
 import com.granveaud.mysql2h2converter.parser.SQLParserManager;
-import com.granveaud.mysql2h2converter.sql.Statement;
+import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -22,12 +22,12 @@ public class Main {
 
         for (String str : args) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(readFile(str), INPUT_CHARSET));
-            Iterator<Statement> sourceIterator = SQLParserManager.parseScript(reader);
+            Iterator<SqlStatement> sourceIterator = SQLParserManager.parseScript(reader);
 
             // conversion and execution
-            Iterator<Statement> it = H2Converter.convertScript(sourceIterator);
+            Iterator<SqlStatement> it = H2Converter.convertScript(sourceIterator);
             while (it.hasNext()) {
-                Statement st = it.next();
+                SqlStatement st = it.next();
 
                 // output to stdout
                 System.out.println(st.toString() + ";");

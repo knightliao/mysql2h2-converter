@@ -40,7 +40,7 @@ alter_specification:
  */
 
 // TODO: implement complete ALTER TABLE statement
-public class AlterTableStatement implements Statement {
+public class AlterTableStatement implements SqlStatement {
     private boolean ignore;
     private String tableName;
 	private List<AlterTableSpecification> specifications;

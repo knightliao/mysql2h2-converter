@@ -63,7 +63,7 @@ tk1 = new Token(tk.kind, str);
   }
 
 // parse one statement in a script (terminated by ';')
-  final public Statement ScriptStatement() throws ParseException {Statement st = null;
+  final public SqlStatement ScriptStatement() throws ParseException {SqlStatement st = null;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case USE:
     case CREATE:
@@ -94,7 +94,7 @@ tk1 = new Token(tk.kind, str);
   }
 
 // parse one statement (without trailing ';')
-  final public Statement Statement() throws ParseException {Statement st = null;
+  final public SqlStatement Statement() throws ParseException {SqlStatement st = null;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case USE:{
       st = UseStatement();
@@ -144,7 +144,7 @@ st = new EmptyStatement();
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement SetVariableStatement() throws ParseException {Assignment assignment;
+  final public SqlStatement SetVariableStatement() throws ParseException {Assignment assignment;
     jj_consume_token(SET);
     assignment = Assignment();
 {if ("" != null) return new SetVariableStatement(assignment);}
@@ -175,7 +175,7 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
       col_name = expr
         [, col_name = expr] ... ]
 */
-  final public Statement InsertStatement() throws ParseException {List<ValueList> valueLists = null;
+  final public SqlStatement InsertStatement() throws ParseException {List<ValueList> valueLists = null;
     String tableName;
     List<String> columnNames = null;
     List<Assignment> assignments = null;
@@ -296,7 +296,7 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement UseStatement() throws ParseException {String dbName;
+  final public SqlStatement UseStatement() throws ParseException {String dbName;
     jj_consume_token(USE);
     dbName = DbObjectName();
 {if ("" != null) return new UseStatement(dbName);}
@@ -307,14 +307,14 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
 ALTER [IGNORE] TABLE tbl_name
     alter_specification [, alter_specification] ...
 */
-  final public Statement AlterStatement() throws ParseException {Statement st;
+  final public SqlStatement AlterStatement() throws ParseException {SqlStatement st;
     jj_consume_token(ALTER);
     st = AlterTableStatement();
 {if ("" != null) return st;}
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement AlterTableStatement() throws ParseException {Token tk = null;
+  final public SqlStatement AlterTableStatement() throws ParseException {Token tk = null;
     String tableName;
     AlterTableSpecification specification = null;
     List<AlterTableSpecification> specifications = new ArrayList<AlterTableSpecification>();
@@ -369,7 +369,7 @@ alter_specification:
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement CreateStatement() throws ParseException {Statement st;
+  final public SqlStatement CreateStatement() throws ParseException {SqlStatement st;
     jj_consume_token(CREATE);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DATABASE:{
@@ -390,7 +390,7 @@ alter_specification:
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement CreateDatabaseStatement() throws ParseException {Token tk = null;
+  final public SqlStatement CreateDatabaseStatement() throws ParseException {Token tk = null;
     String dbName;
     jj_consume_token(DATABASE);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -414,7 +414,7 @@ alter_specification:
       [table_options] [select_statement]
 
 */
-  final public Statement CreateTableStatement() throws ParseException {Token tk = null, tk2 = null;
+  final public SqlStatement CreateTableStatement() throws ParseException {Token tk = null, tk2 = null;
     String tableName;
     CreateTableDefinition definition = null;
     List<CreateTableOption> options = null;
@@ -1894,7 +1894,7 @@ reference_option:
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement DropStatement() throws ParseException {Statement st;
+  final public SqlStatement DropStatement() throws ParseException {SqlStatement st;
     jj_consume_token(DROP);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case DATABASE:{
@@ -1915,7 +1915,7 @@ reference_option:
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement DropDatabaseStatement() throws ParseException {Token tk = null;
+  final public SqlStatement DropDatabaseStatement() throws ParseException {Token tk = null;
     String dbName;
     jj_consume_token(DATABASE);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1933,7 +1933,7 @@ reference_option:
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement DropTableStatement() throws ParseException {Token tk = null;
+  final public SqlStatement DropTableStatement() throws ParseException {Token tk = null;
     Token tk2 = null;
     List<String> tableNames;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1966,7 +1966,7 @@ LOCK TABLES
     tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}
     [, tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}] ...
 */
-  final public Statement LockTablesStatement() throws ParseException {List<LockTablesSpecification> specifications = new ArrayList<LockTablesSpecification>();
+  final public SqlStatement LockTablesStatement() throws ParseException {List<LockTablesSpecification> specifications = new ArrayList<LockTablesSpecification>();
     LockTablesSpecification specification;
     jj_consume_token(LOCK);
     jj_consume_token(TABLES);
@@ -2041,21 +2041,21 @@ specifications.add(specification);
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement UnlockTablesStatement() throws ParseException {
+  final public SqlStatement UnlockTablesStatement() throws ParseException {
     jj_consume_token(UNLOCK);
     jj_consume_token(TABLES);
 {if ("" != null) return new UnlockTablesStatement();}
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement StartTransactionStatement() throws ParseException {
+  final public SqlStatement StartTransactionStatement() throws ParseException {
     jj_consume_token(START);
     jj_consume_token(TRANSACTION);
 {if ("" != null) return new StartTransactionStatement();}
     throw new Error("Missing return statement in function");
   }
 
-  final public Statement CommitTransactionStatement() throws ParseException {
+  final public SqlStatement CommitTransactionStatement() throws ParseException {
     jj_consume_token(COMMIT);
 {if ("" != null) return new CommitTransactionStatement();}
     throw new Error("Missing return statement in function");

@@ -10,7 +10,7 @@ DROP [TEMPORARY] TABLE [IF EXISTS]
 tbl_name [, tbl_name] ...
  */
 
-public class DropTableStatement implements Statement {
+public class DropTableStatement implements SqlStatement {
     private boolean temporary, ifExists;
     private List<String> tableNames;
 

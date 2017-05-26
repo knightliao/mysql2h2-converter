@@ -16,7 +16,7 @@ import org.junit.*;
 
 import com.granveaud.mysql2h2converter.parser.ParseException;
 import com.granveaud.mysql2h2converter.parser.SQLParserManager;
-import com.granveaud.mysql2h2converter.sql.Statement;
+import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class ConverterTest {
 
@@ -51,7 +51,7 @@ public class ConverterTest {
 	}
 
 	private List<Map<String, Object>> executeSelect(String sql) throws SQLException {
-	    try (java.sql.Statement sqlStat = connection.createStatement()) {
+	    try (Statement sqlStat = connection.createStatement()) {
 	        sqlStat.execute(sql.toString());
 	        try (ResultSet rs = sqlStat.getResultSet()) {
 	            ResultSetMetaData metaData = rs.getMetaData();
@@ -70,12 +70,12 @@ public class ConverterTest {
 	}
 
 	private void executeScript(Reader reader) throws SQLException, ParseException {
-		Iterator<Statement> sourceIterator = SQLParserManager.parseScript(reader);
+		Iterator<SqlStatement> sourceIterator = SQLParserManager.parseScript(reader);
 
 		// conversion and execution
-        Iterator<Statement> it = H2Converter.convertScript(sourceIterator);
+        Iterator<SqlStatement> it = H2Converter.convertScript(sourceIterator);
         while (it.hasNext()) {
-            Statement st = it.next();
+            SqlStatement st = it.next();
 			executeUpdate(st.toString());
 		}
 	}

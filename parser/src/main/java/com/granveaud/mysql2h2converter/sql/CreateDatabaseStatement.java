@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-public class CreateDatabaseStatement implements Statement {
+public class CreateDatabaseStatement implements SqlStatement {
 	private String dbName;
 	private boolean ifNotExists;
 

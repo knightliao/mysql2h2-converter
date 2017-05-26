@@ -28,7 +28,7 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
       col_name=expr
         [, col_name=expr] ... ]*/
 
-public class InsertStatement implements Statement {
+public class InsertStatement implements SqlStatement {
     private boolean lowPriority, highPriority, delayed, ignore, into;
 	private String tableName;
 	private List<String> columnNames;

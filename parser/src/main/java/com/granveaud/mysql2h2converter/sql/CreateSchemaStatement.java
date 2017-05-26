@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-public class CreateSchemaStatement implements Statement {
+public class CreateSchemaStatement implements SqlStatement {
 	private String schemaName;
 	private boolean ifNotExists;
 

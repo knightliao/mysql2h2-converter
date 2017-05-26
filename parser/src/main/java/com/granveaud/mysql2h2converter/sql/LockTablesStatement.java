@@ -9,7 +9,7 @@ LOCK TABLES
     tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}
     [, tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}] ...
  */
-public class LockTablesStatement implements Statement {
+public class LockTablesStatement implements SqlStatement {
 	private List<LockTablesSpecification> specifications;
 
 	public LockTablesStatement(List<LockTablesSpecification> specifications) {

@@ -98,7 +98,7 @@ table_option:
 select_statement:
     [IGNORE | REPLACE] [AS] SELECT ...   (Some legal select statement)
  */
-public class CreateTableStatement implements Statement {
+public class CreateTableStatement implements SqlStatement {
     private boolean temporary, ifNotExists;
     private String tableName;
     private CreateTableDefinition definition;

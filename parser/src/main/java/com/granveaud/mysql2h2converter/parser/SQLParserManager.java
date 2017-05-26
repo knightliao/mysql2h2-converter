@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.io.Reader;
 import java.io.StringReader;
 
-import com.granveaud.mysql2h2converter.sql.Statement;
+import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class SQLParserManager {
-    static class ScriptIterator implements Iterator<Statement> {
+    static class ScriptIterator implements Iterator<SqlStatement> {
         private SQLParser parser;
-        private Statement nextStatement;
+        private SqlStatement nextStatement;
 
         ScriptIterator(SQLParser parser) {
             this.parser = parser;
@@ -31,8 +31,8 @@ public class SQLParserManager {
         }
 
         @Override
-        public Statement next() {
-            Statement result = nextStatement;
+        public SqlStatement next() {
+            SqlStatement result = nextStatement;
             parseNextStatement();
 
             return result;
@@ -44,16 +44,16 @@ public class SQLParserManager {
         }
     }
 
-    public static Statement parseStatement(String str) throws ParseException {
+    public static SqlStatement parseStatement(String str) throws ParseException {
         return parseStatement(new StringReader(str));
     }
 
-    public static Statement parseStatement(Reader reader) throws ParseException {
+    public static SqlStatement parseStatement(Reader reader) throws ParseException {
         SQLParser parser = new SQLParser(reader);
         return parser.Statement();
     }
 
-    public static Iterator<Statement> parseScript(Reader reader) throws ParseException {
+    public static Iterator<SqlStatement> parseScript(Reader reader) throws ParseException {
         SQLParser parser = new SQLParser(reader);
         return new ScriptIterator(parser);
     }

@@ -12,7 +12,7 @@ import java.util.List;
  SET CACHE_SIZE int
  SET SCHEMA_SEARCH_PATH schemaName [,schemaName]*
  */
-public class SetStatement implements Statement {
+public class SetStatement implements SqlStatement {
     private String type;
     private List<Value> values;
 

@@ -14,20 +14,20 @@ public class H2Converter {
 
     private static class ConverterIterator implements Iterator<SqlStatement> {
         private Map<String, Integer> indexNameOccurrences = new HashMap<String, Integer>();
-        private List<Statement> delayedStatements = new ArrayList<Statement>();
+        private List<SqlStatement> delayedStatements = new ArrayList<SqlStatement>();
 
-        private Iterator<Statement> sourceIterator;
-        private List<Statement> nextStatements = new ArrayList<Statement>();
-        private Iterator<Statement> nextStatementIterator, delayedStatementsIterator;
+        private Iterator<SqlStatement> sourceIterator;
+        private List<SqlStatement> nextStatements = new ArrayList<SqlStatement>();
+        private Iterator<SqlStatement> nextStatementIterator, delayedStatementsIterator;
 
-        ConverterIterator(Iterator<Statement> sourceIterator) {
+        ConverterIterator(Iterator<SqlStatement> sourceIterator) {
             this.sourceIterator = sourceIterator;
             loadNextStatements();
         }
 
         private void loadNextStatements() {
             while (true) {
-                Statement sourceNextStatement = sourceIterator.next();
+                SqlStatement sourceNextStatement = sourceIterator.next();
                 if (sourceNextStatement == null) {
                     // finished source statements
                     nextStatementIterator = null;
@@ -55,14 +55,14 @@ public class H2Converter {
         }
 
         @Override
-        public Statement next() {
+        public SqlStatement next() {
             // iterator is on delayed statements
             if (delayedStatementsIterator != null) {
                 return delayedStatementsIterator.next();
             }
 
             // iterator is on conversion of source iterator
-            Statement next = nextStatementIterator.next();
+            SqlStatement next = nextStatementIterator.next();
             if (!nextStatementIterator.hasNext()) {
                 loadNextStatements();
             }
@@ -75,7 +75,7 @@ public class H2Converter {
             throw new UnsupportedOperationException();
         }
 
-        private void convertStatement(Statement sourceStatement, List<Statement> result) {
+        private void convertStatement(SqlStatement sourceStatement, List<SqlStatement> result) {
             if (sourceStatement instanceof EmptyStatement) {
                 // ignore empty statements
             } else if (sourceStatement instanceof LockTablesStatement ||
@@ -171,7 +171,7 @@ public class H2Converter {
         }
 
         private void handleCreateTableConstraints(CreateTableStatement createStatement,
-                                                  List<Statement> delayedStatements) {
+                                                  List<SqlStatement> delayedStatements) {
             Iterator<ColumnConstraint> it = createStatement.getDefinition().getConstraints().iterator();
             while (it.hasNext()) {
                 ColumnConstraint constraint = it.next();
@@ -248,7 +248,7 @@ public class H2Converter {
         }
     }
 
-    public static Iterator<Statement> convertScript(Iterator<Statement> sourceIterator) {
+    public static Iterator<SqlStatement> convertScript(Iterator<SqlStatement> sourceIterator) {
         return new ConverterIterator(sourceIterator);
     }
 }

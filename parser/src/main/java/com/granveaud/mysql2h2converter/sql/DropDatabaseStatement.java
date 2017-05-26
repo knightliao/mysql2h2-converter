@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-public class DropDatabaseStatement implements Statement {
+public class DropDatabaseStatement implements SqlStatement {
     private String dbName;
     private boolean ifExists;
 
