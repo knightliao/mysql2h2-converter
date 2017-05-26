@@ -43,15 +43,15 @@ alter_specification:
 public class AlterTableStatement implements SqlStatement {
     private boolean ignore;
     private String tableName;
-	private List<AlterTableSpecification> specifications;
+    private List<AlterTableSpecification> specifications;
 
-	public AlterTableStatement(boolean ignore, String tableName, List<AlterTableSpecification> specifications) {
-		this.ignore = ignore;
-		this.tableName = tableName;
-		this.specifications = specifications;
-	}
+    public AlterTableStatement(boolean ignore, String tableName, List<AlterTableSpecification> specifications) {
+        this.ignore = ignore;
+        this.tableName = tableName;
+        this.specifications = specifications;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "ALTER" + (ignore ? " IGNORE" : "") + " TABLE " + tableName + " " + joinList(specifications, ",");
     }

@@ -30,25 +30,25 @@ INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
 
 public class InsertStatement implements SqlStatement {
     private boolean lowPriority, highPriority, delayed, ignore, into;
-	private String tableName;
-	private List<String> columnNames;
-	private List<ValueList> values;
+    private String tableName;
+    private List<String> columnNames;
+    private List<ValueList> values;
 // private SelectStatement subSelect;
-	private List<Assignment> assignments;
-	private List<Assignment> onDuplicateKeyUpdateAssignments;
+    private List<Assignment> assignments;
+    private List<Assignment> onDuplicateKeyUpdateAssignments;
 
-	public InsertStatement(boolean lowPriority, boolean highPriority, boolean delayed, boolean ignore, boolean into, String tableName, List<String> columnNames, List<ValueList> values, List<Assignment> assignments, List<Assignment> onDuplicateKeyUpdateAssignments) {
-		this.lowPriority = lowPriority;
-		this.highPriority = highPriority;
-		this.delayed = delayed;
-		this.ignore = ignore;
-		this.into = into;
-		this.tableName = tableName;
-		this.columnNames = columnNames;
-		this.values = values;
-		this.assignments = assignments;
-		this.onDuplicateKeyUpdateAssignments = onDuplicateKeyUpdateAssignments;
-	}
+    public InsertStatement(boolean lowPriority, boolean highPriority, boolean delayed, boolean ignore, boolean into, String tableName, List<String> columnNames, List<ValueList> values, List<Assignment> assignments, List<Assignment> onDuplicateKeyUpdateAssignments) {
+        this.lowPriority = lowPriority;
+        this.highPriority = highPriority;
+        this.delayed = delayed;
+        this.ignore = ignore;
+        this.into = into;
+        this.tableName = tableName;
+        this.columnNames = columnNames;
+        this.values = values;
+        this.assignments = assignments;
+        this.onDuplicateKeyUpdateAssignments = onDuplicateKeyUpdateAssignments;
+    }
 
     public List<ValueList> getValues() {
         return values;
@@ -57,10 +57,10 @@ public class InsertStatement implements SqlStatement {
     @Override
     public String toString() {
         return "INSERT" + (lowPriority ? " LOW_PRIORITY" : "") + (highPriority ? " HIGH_PRIORITY" : "") + (delayed ? " DELAYED" : "") + (ignore ? " IGNORE" : "") + (into ? " INTO" : "") +
-				" " + tableName +
-				(columnNames != null ? " (" + joinList(columnNames, ",") + ")" : "") +
-				(values != null ? " VALUES " + joinList(values, ",") : "") +
-				(assignments != null ? " SET " + joinList(assignments, ",") : "") +
-				(onDuplicateKeyUpdateAssignments != null ? " ON DUPLICATE KEY UPDATE " + joinList(onDuplicateKeyUpdateAssignments, ",") : "");
+                " " + tableName +
+                (columnNames != null ? " (" + joinList(columnNames, ",") + ")" : "") +
+                (values != null ? " VALUES " + joinList(values, ",") : "") +
+                (assignments != null ? " SET " + joinList(assignments, ",") : "") +
+                (onDuplicateKeyUpdateAssignments != null ? " ON DUPLICATE KEY UPDATE " + joinList(onDuplicateKeyUpdateAssignments, ",") : "");
     }
 }

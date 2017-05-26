@@ -3221,7 +3221,7 @@ bfv = new BitFieldValue(BitFieldValue.Format.FORMAT2, tk.image.substring(2));
 
   /** Reinitialise. */
   public void ReInit(java.io.Reader stream) {
-	if (jj_input_stream == null) {
+    if (jj_input_stream == null) {
       jj_input_stream = new SimpleCharStream(stream, 1, 1);
    } else {
       jj_input_stream.ReInit(stream, 1, 1);

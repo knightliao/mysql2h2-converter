@@ -15,11 +15,11 @@ public class ColumnName {
         this.desc = desc;
     }
 
-	public IntegerValue getLength() {
-		return length;
-	}
+    public IntegerValue getLength() {
+        return length;
+    }
 
-	public void setLength(IntegerValue length) {
+    public void setLength(IntegerValue length) {
         this.length = length;
     }
 

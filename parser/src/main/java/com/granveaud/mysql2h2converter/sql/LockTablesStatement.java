@@ -10,14 +10,14 @@ LOCK TABLES
     [, tbl_name [AS alias] {READ [LOCAL] | [LOW_PRIORITY] WRITE}] ...
  */
 public class LockTablesStatement implements SqlStatement {
-	private List<LockTablesSpecification> specifications;
+    private List<LockTablesSpecification> specifications;
 
-	public LockTablesStatement(List<LockTablesSpecification> specifications) {
-		this.specifications = specifications;
-	}
+    public LockTablesStatement(List<LockTablesSpecification> specifications) {
+        this.specifications = specifications;
+    }
 
-	@Override
-	public String toString() {
-		return "LOCK TABLES " + joinList(specifications, ",");
-	}
+    @Override
+    public String toString() {
+        return "LOCK TABLES " + joinList(specifications, ",");
+    }
 }
