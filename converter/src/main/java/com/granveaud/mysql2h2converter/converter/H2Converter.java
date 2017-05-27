@@ -91,11 +91,11 @@ public class H2Converter {
             } else if (sourceStatement instanceof CommitTransactionStatement) {
                 // replace with H2 equivalent
                 result.add(new CommitTransactionStatement());
-                result.add(new SetStatement("AUTOCOMMIT", Arrays.asList(new ExpressionValue("ON"))));
+                result.add(new SetStatement("AUTOCOMMIT", Arrays.<Value>asList(new ExpressionValue("ON"))));
             } else if (sourceStatement instanceof UseStatement) {
                 // USE dbName => SET SCHEMA dbName
                 UseStatement useStatement = (UseStatement) sourceStatement;
-                result.add(new SetStatement("SCHEMA", Arrays.asList(new StringValue(useStatement.getDbName()))));
+                result.add(new SetStatement("SCHEMA", Arrays.<Value>asList(new StringValue(useStatement.getDbName()))));
                 // set up db name
                 currentDbName = useStatement.getDbName();
             } else if (sourceStatement instanceof CreateDatabaseStatement) {

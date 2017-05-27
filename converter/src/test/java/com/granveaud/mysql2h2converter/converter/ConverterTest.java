@@ -45,7 +45,7 @@ public class ConverterTest {
     }
 
     private void executeUpdate(String sql) throws SQLException {
-        try (java.sql.Statement sqlStat = connection.createStatement()) {
+        try (Statement sqlStat = connection.createStatement()) {
             sqlStat.executeUpdate(sql.toString());
         }
     }
