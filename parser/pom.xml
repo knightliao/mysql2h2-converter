@@ -10,7 +10,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <groupId>com.parmet.mysql2h2-converter</groupId>
+  <groupId>com.parmet</groupId>
   <artifactId>mysql2h2-parser</artifactId>
 
   <build>
