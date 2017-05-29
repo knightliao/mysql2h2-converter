@@ -1,10 +1,13 @@
-package com.granveaud.mysql2h2converter.parser;
+package com.granveaud.mysql2h2converter;
 
 import java.util.Iterator;
 
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.granveaud.mysql2h2converter.parser.ParseException;
+import com.granveaud.mysql2h2converter.parser.ReaderProvider;
+import com.granveaud.mysql2h2converter.parser.SQLParser;
 import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class SQLParserManager {

@@ -2,6 +2,8 @@ package com.granveaud.mysql2h2converter.parser;
 
 import org.junit.Test;
 
+import com.granveaud.mysql2h2converter.SQLParserManager;
+
 import static org.junit.Assert.assertEquals;
 
 public class BasicTest {

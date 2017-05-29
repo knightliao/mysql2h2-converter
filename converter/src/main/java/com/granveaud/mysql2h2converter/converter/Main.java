@@ -1,15 +1,16 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import com.granveaud.mysql2h2converter.parser.ParseException;
-import com.granveaud.mysql2h2converter.parser.SQLParserManager;
-import com.granveaud.mysql2h2converter.sql.SqlStatement;
+import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.zip.GZIPInputStream;
+
+import com.granveaud.mysql2h2converter.SQLParserManager;
+import com.granveaud.mysql2h2converter.parser.ParseException;
+import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class Main {
     final static private Charset INPUT_CHARSET = Charset.forName("UTF-8");

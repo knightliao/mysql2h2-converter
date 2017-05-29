@@ -14,8 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
 
+import com.granveaud.mysql2h2converter.SQLParserManager;
 import com.granveaud.mysql2h2converter.parser.ParseException;
-import com.granveaud.mysql2h2converter.parser.SQLParserManager;
 import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class ConverterTest {

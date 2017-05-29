@@ -4,10 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.parmet.mysql2h2-converter</groupId>
+    <groupId>com.parmet</groupId>
     <artifactId>mysql2h2-parent</artifactId>
-      <version>0.2.0</version>
-      <relativePath>..</relativePath>
+    <version>0.2.1</version>
   </parent>
 
   <groupId>com.parmet</groupId>
@@ -15,7 +14,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.parmet.mysql2h2-converter</groupId>
+      <groupId>com.parmet</groupId>
       <artifactId>mysql2h2-parser</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -27,6 +26,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <build>
     <finalName>mysql2h2</finalName>
