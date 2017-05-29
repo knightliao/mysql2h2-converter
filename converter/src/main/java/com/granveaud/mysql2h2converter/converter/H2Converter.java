@@ -1,65 +1,33 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.granveaud.mysql2h2converter.sql.AlterTableSpecification;
-import com.granveaud.mysql2h2converter.sql.AlterTableStatement;
-import com.granveaud.mysql2h2converter.sql.BinaryValue;
-import com.granveaud.mysql2h2converter.sql.BitFieldValue;
-import com.granveaud.mysql2h2converter.sql.BooleanValue;
-import com.granveaud.mysql2h2converter.sql.ColumnConstraint;
-import com.granveaud.mysql2h2converter.sql.ColumnDefinition;
-import com.granveaud.mysql2h2converter.sql.ColumnName;
-import com.granveaud.mysql2h2converter.sql.CommitTransactionStatement;
-import com.granveaud.mysql2h2converter.sql.CreateDatabaseStatement;
-import com.granveaud.mysql2h2converter.sql.CreateSchemaStatement;
-import com.granveaud.mysql2h2converter.sql.CreateTableStatement;
-import com.granveaud.mysql2h2converter.sql.DropTableStatement;
-import com.granveaud.mysql2h2converter.sql.EmptyStatement;
-import com.granveaud.mysql2h2converter.sql.ExpressionValue;
-import com.granveaud.mysql2h2converter.sql.InsertStatement;
-import com.granveaud.mysql2h2converter.sql.LockTablesStatement;
-import com.granveaud.mysql2h2converter.sql.SetStatement;
-import com.granveaud.mysql2h2converter.sql.SetVariableStatement;
-import com.granveaud.mysql2h2converter.sql.StartTransactionStatement;
-import com.granveaud.mysql2h2converter.sql.Statement;
-import com.granveaud.mysql2h2converter.sql.StringValue;
-import com.granveaud.mysql2h2converter.sql.UnlockTablesStatement;
-import com.granveaud.mysql2h2converter.sql.UseStatement;
-import com.granveaud.mysql2h2converter.sql.Value;
-import com.granveaud.mysql2h2converter.sql.ValueList;
+import com.granveaud.mysql2h2converter.sql.*;
 
 public class H2Converter {
-    final static private Logger LOGGER = LoggerFactory.getLogger(H2Converter.class);
+    private static final Logger LOGGER = LogManager.getLogger(H2Converter.class);
 
-    //
-    static String currentDbName = null;
+    private static String currentDbName = null;
 
-    static class ConverterIterator implements Iterator<Statement> {
+    private static class ConverterIterator implements Iterator<SqlStatement> {
         private Map<String, Integer> indexNameOccurrences = new HashMap<String, Integer>();
-        private List<Statement> delayedStatements = new ArrayList<Statement>();
+        private List<SqlStatement> delayedStatements = new ArrayList<SqlStatement>();
 
-        private Iterator<Statement> sourceIterator;
-        private List<Statement> nextStatements = new ArrayList<Statement>();
-        private Iterator<Statement> nextStatementIterator, delayedStatementsIterator;
+        private Iterator<SqlStatement> sourceIterator;
+        private List<SqlStatement> nextStatements = new ArrayList<SqlStatement>();
+        private Iterator<SqlStatement> nextStatementIterator, delayedStatementsIterator;
 
-        ConverterIterator(Iterator<Statement> sourceIterator) {
+        ConverterIterator(Iterator<SqlStatement> sourceIterator) {
             this.sourceIterator = sourceIterator;
             loadNextStatements();
         }
 
         private void loadNextStatements() {
-
             while (true) {
-                Statement sourceNextStatement = sourceIterator.next();
+                SqlStatement sourceNextStatement = sourceIterator.next();
                 if (sourceNextStatement == null) {
                     // finished source statements
                     nextStatementIterator = null;
@@ -82,19 +50,19 @@ public class H2Converter {
 
         @Override
         public boolean hasNext() {
-            return (nextStatementIterator != null) || (delayedStatementsIterator != null && delayedStatementsIterator
-                    .hasNext());
+            return (nextStatementIterator != null) ||
+                    (delayedStatementsIterator != null && delayedStatementsIterator.hasNext());
         }
 
         @Override
-        public Statement next() {
+        public SqlStatement next() {
             // iterator is on delayed statements
             if (delayedStatementsIterator != null) {
                 return delayedStatementsIterator.next();
             }
 
             // iterator is on conversion of source iterator
-            Statement next = nextStatementIterator.next();
+            SqlStatement next = nextStatementIterator.next();
             if (!nextStatementIterator.hasNext()) {
                 loadNextStatements();
             }
@@ -107,45 +75,41 @@ public class H2Converter {
             throw new UnsupportedOperationException();
         }
 
-        private void convertStatement(Statement sourceStatement, List<Statement> result) {
-
+        private void convertStatement(SqlStatement sourceStatement, List<SqlStatement> result) {
             if (sourceStatement instanceof EmptyStatement) {
                 // ignore empty statements
-            } else if (sourceStatement instanceof LockTablesStatement
-                    || sourceStatement instanceof UnlockTablesStatement) {
+            } else if (sourceStatement instanceof LockTablesStatement ||
+                    sourceStatement instanceof UnlockTablesStatement) {
                 // do not copy, MySQL specific
-
+                LOGGER.warn("Dropping lock/unlock statement {}", sourceStatement);
             } else if (sourceStatement instanceof SetVariableStatement) {
                 // do not copy, SET statement are usually MySQL specific
-
+                LOGGER.warn("Dropping SET statement {}", sourceStatement);
             } else if (sourceStatement instanceof StartTransactionStatement) {
                 // replace with H2 equivalent
                 result.add(new SetStatement("AUTOCOMMIT", Arrays.<Value>asList(new ExpressionValue("OFF"))));
-
             } else if (sourceStatement instanceof CommitTransactionStatement) {
                 // replace with H2 equivalent
                 result.add(new CommitTransactionStatement());
                 result.add(new SetStatement("AUTOCOMMIT", Arrays.<Value>asList(new ExpressionValue("ON"))));
-
             } else if (sourceStatement instanceof UseStatement) {
                 // USE dbName => SET SCHEMA dbName
                 UseStatement useStatement = (UseStatement) sourceStatement;
                 result.add(new SetStatement("SCHEMA", Arrays.<Value>asList(new StringValue(useStatement.getDbName()))));
-
                 // set up db name
                 currentDbName = useStatement.getDbName();
-
             } else if (sourceStatement instanceof CreateDatabaseStatement) {
                 // CREATE DATABASE => CREATE SCHEMA
                 CreateDatabaseStatement createStatement = (CreateDatabaseStatement) sourceStatement;
                 result.add(new CreateSchemaStatement(createStatement.getDbName(), createStatement.isIfNotExists()));
-
             } else if (sourceStatement instanceof CreateTableStatement) {
-
                 CreateTableStatement createStatement = (CreateTableStatement) sourceStatement;
 
                 // ignore MySQL create table specific options
-                createStatement.setOptions(null);
+                if (createStatement.getOptions() != null && !createStatement.getOptions().isEmpty()) {
+                    LOGGER.warn("Dropping table creation options {} for table {}", createStatement.getOptions(), createStatement.getTableName());
+                    createStatement.setOptions(null);
+                }
 
                 // set up db name
                 if (currentDbName != null) {
@@ -166,7 +130,6 @@ public class H2Converter {
                 handleCreateTableConstraints(createStatement, delayedStatements);
 
                 result.add(sourceStatement);
-
             } else if (sourceStatement instanceof InsertStatement) {
                 InsertStatement insertStatement = (InsertStatement) sourceStatement;
 
@@ -176,19 +139,15 @@ public class H2Converter {
                 }
 
                 result.add(sourceStatement);
-
             } else if (sourceStatement instanceof DropTableStatement) {
-
-                DropTableStatement dropTableStatement = (DropTableStatement) sourceStatement;
+                // DropTableStatement dropTableStatement = (DropTableStatement) sourceStatement;
 
                 // set up db name
                 if (currentDbName != null) {
                     // dropTableStatement.setDatabaseName(currentDbName);
                 }
                 result.add(sourceStatement);
-
             } else {
-
                 // general case: add statement unchanged
                 result.add(sourceStatement);
             }
@@ -212,7 +171,7 @@ public class H2Converter {
         }
 
         private void handleCreateTableConstraints(CreateTableStatement createStatement,
-                                                  List<Statement> delayedStatements) {
+                                                  List<SqlStatement> delayedStatements) {
             Iterator<ColumnConstraint> it = createStatement.getDefinition().getConstraints().iterator();
             while (it.hasNext()) {
                 ColumnConstraint constraint = it.next();
@@ -229,9 +188,18 @@ public class H2Converter {
 
         private void handleCreateTableColumnDefinitions(CreateTableStatement createTableStatement) {
             for (ColumnDefinition def : createTableStatement.getDefinition().getColumnDefinitions()) {
-                def.getColumnType().setCharsetName(null);
-                def.getColumnType().setCollationName(null);
-                def.setUpdateValue(null);
+                if (def.getColumnType().getCharsetName() != null) {
+                    LOGGER.warn("Dropping charset name in column definition {}", def);
+                    def.getColumnType().setCharsetName(null);
+                }
+                if (def.getColumnType().getCollationName() != null) {
+                    LOGGER.warn("Dropping collation in column definition {}", def);
+                    def.getColumnType().setCollationName(null);
+                }
+                if (def.getUpdateValue() != null) {
+                    LOGGER.warn("Dropping update value in column definition {}", def);
+                    def.setUpdateValue(null);
+                }
             }
         }
 
@@ -239,7 +207,7 @@ public class H2Converter {
             for (ColumnConstraint constraint : createTableStatement.getDefinition().getConstraints()) {
                 for (ColumnName columnName : constraint.getIndexColumnNames()) {
                     if (columnName.getLength() != null) {
-                        LOGGER.warn("Remove length value in key/index column name");
+                        LOGGER.warn("Dropping length value in key/index column name {}", columnName);
                         columnName.setLength(null);
                     }
                 }
@@ -255,15 +223,13 @@ public class H2Converter {
                         if (strValue.getValue().equals("'0000-00-00 00:00:00'")) {
                             // replace '0000-00-00 00:00:00' datetime value
                             // TODO: this is not correct because '0000-00-00 00:00:00' could be a real string value
-                            LOGGER.warn("Replace '0000-00-00 00:00:00' with valid H2 datetime (unsafe replacement)");
+                            LOGGER.warn("Replacing '0000-00-00 00:00:00' with valid H2 datetime (unsafe replacement)");
                             value = new StringValue("'0001-01-01 00:00:00'");
                         } else if (strValue.getValue().contains("\\")) {
                             // handle \n, \' ...
                             value = DbUtils.transformStringValue(strValue.getValue());
                         }
-
                         valueList.getValues().set(i, value);
-
                     } else if (value instanceof BinaryValue) {
                         // be sure to use X'hex' format
                         ((BinaryValue) value).setFormat(BinaryValue.Format.FORMAT1);
@@ -274,8 +240,7 @@ public class H2Converter {
                         } else if (bitFieldValue.getBits().equals("0")) {
                             valueList.getValues().set(i, new BooleanValue(false));
                         } else {
-                            LOGGER.warn(
-                                    "Don't know how to convert BitFieldValue " + bitFieldValue.getBits() + " for H2");
+                            LOGGER.warn("Don't know how to convert BitFieldValue {} for H2", bitFieldValue.getBits());
                         }
                     }
                 }
@@ -283,7 +248,14 @@ public class H2Converter {
         }
     }
 
-    public static Iterator<Statement> convertScript(Iterator<Statement> sourceIterator) {
+    /**
+     * Transforms the supplied Iterator of parsed MySQL statements and supplies H2-compatible
+     * converted forms when possible. SET and UPDATE statements are not implemented, and not
+     * all converted statements provide the same information as their MySQL equivalents. When
+     * possible this library emits warning log statements when information is lost in a
+     * conversion.
+     */
+    public static Iterator<SqlStatement> convertScript(Iterator<SqlStatement> sourceIterator) {
         return new ConverterIterator(sourceIterator);
     }
 }

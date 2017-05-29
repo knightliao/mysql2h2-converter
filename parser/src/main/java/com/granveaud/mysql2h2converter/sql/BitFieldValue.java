@@ -10,18 +10,18 @@ public class BitFieldValue implements Value {
 
     public BitFieldValue(Format format, String bits) {
         this.format = format;
-		this.bits = bits;
+        this.bits = bits;
     }
 
     public void setFormat(Format format) {
         this.format = format;
     }
 
-	public String getBits() {
-		return bits;
-	}
+    public String getBits() {
+        return bits;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return (format == Format.FORMAT1 ? "b'" : "0b") +
                 bits +

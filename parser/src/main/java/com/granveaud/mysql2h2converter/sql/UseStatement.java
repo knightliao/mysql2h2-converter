@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-public class UseStatement implements Statement {
+public class UseStatement implements SqlStatement {
     private String dbName;
 
     public UseStatement(String dbName) {

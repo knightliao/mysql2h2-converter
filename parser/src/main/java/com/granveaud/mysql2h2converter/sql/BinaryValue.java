@@ -10,18 +10,18 @@ public class BinaryValue implements Value {
 
     public BinaryValue(Format format, String hex) {
         this.format = format;
-		this.hex = hex;
+        this.hex = hex;
     }
 
     public void setFormat(Format format) {
         this.format = format;
     }
 
-	public String getHex() {
-		return hex;
-	}
+    public String getHex() {
+        return hex;
+    }
 
-	@Override
+    @Override
 
     public String toString() {
         return (format == Format.FORMAT1 ? "X'" : "0x") +

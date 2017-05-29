@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class ColumnConstraint {
                 type +
                 (indexName != null ? " " + indexName : "") +
                 (indexType != null ? " USING " + indexType : "") +
-                (indexColumnNames != null ? " (" + Joiner.on(',').join(indexColumnNames) + ")" : "") +
+                (indexColumnNames != null ? " (" + joinList(indexColumnNames, ",") + ")" : "") +
                 (columnReference != null ? " " + columnReference : "") +
                 (checkExpr != null ? " " + checkExpr : "");
 

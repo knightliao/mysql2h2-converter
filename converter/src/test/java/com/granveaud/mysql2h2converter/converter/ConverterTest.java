@@ -1,115 +1,105 @@
 package com.granveaud.mysql2h2converter.converter;
 
-import com.granveaud.mysql2h2converter.parser.ParseException;
-import com.granveaud.mysql2h2converter.parser.SQLParserManager;
-import com.granveaud.mysql2h2converter.sql.Statement;
-import org.junit.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.*;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.*;
-import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.*;
+
+import com.granveaud.mysql2h2converter.SQLParserManager;
+import com.granveaud.mysql2h2converter.parser.ParseException;
+import com.granveaud.mysql2h2converter.sql.SqlStatement;
 
 public class ConverterTest {
 
-    final static private Logger LOGGER = LoggerFactory.getLogger(ConverterTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConverterTest.class);
 
-	@BeforeClass
-	public static void initDriver() {
-		org.h2.Driver.load();
-	}
+     @BeforeClass
+    public static void initDriver() {
+        org.h2.Driver.load();
+    }
 
-	@AfterClass
-	public static void cleanupDriver() {
-		org.h2.Driver.unload();
-	}
+    @AfterClass
+    public static void cleanupDriver() {
+        org.h2.Driver.unload();
+    }
 
-	private Connection connection;
+    private Connection connection;
 
-	@Before
-	public void initConnection() throws SQLException {
-		connection = DriverManager.getConnection("jdbc:h2:mem:test;MODE=MySQL");
-	}
+    @Before
+    public void initConnection() throws SQLException {
+        connection = DriverManager.getConnection("jdbc:h2:mem:test;MODE=MySQL");
+    }
 
-	@After
-	public void closeConnection() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			LOGGER.warn("Exception while closing connection", e);
-		}
-	}
+    @After
+    public void closeConnection() throws SQLException {
+        connection.close();
+    }
 
-	private void executeUpdate(String sql) throws SQLException {
-		try {
-			java.sql.Statement sqlStat = connection.createStatement();
-			sqlStat.executeUpdate(sql.toString());
-			sqlStat.close();
-		} catch (SQLException e) {
-			LOGGER.warn("Error sql=" + sql, e);
-			throw e;
-		}
-	}
+    private void executeUpdate(String sql) throws SQLException {
+        try (Statement sqlStat = connection.createStatement()) {
+            sqlStat.executeUpdate(sql.toString());
+        }
+    }
 
-	private List<Map<String, Object>> executeSelect(String sql) throws SQLException {
-		List<Map<String, Object>> result = null;
+    private List<Map<String, Object>> executeSelect(String sql) throws SQLException {
+        try (Statement sqlStat = connection.createStatement()) {
+            sqlStat.execute(sql.toString());
+            try (ResultSet rs = sqlStat.getResultSet()) {
+                ResultSetMetaData metaData = rs.getMetaData();
 
-		java.sql.Statement sqlStat = connection.createStatement();
-		if (sqlStat.execute(sql.toString())) {
-			ResultSet rs = sqlStat.getResultSet();
-			ResultSetMetaData metaData = rs.getMetaData();
+                List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+                while (rs.next()) {
+                    Map<String, Object> record = new HashMap<String, Object>();
+                    for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                        record.put(metaData.getColumnName(i), rs.getObject(i));
+                    }
+                    result.add(record);
+                }
+                return result;
+            }
+        }
+    }
 
-			result = new ArrayList<Map<String, Object>>();
-			while (rs.next()) {
-				Map<String, Object> record = new HashMap<String, Object>();
-				for (int i = 1; i <= metaData.getColumnCount(); i++) {
-					record.put(metaData.getColumnName(i), rs.getObject(i));
-				}
-				result.add(record);
-			}
-		}
-		sqlStat.close();
+    private void executeScript(Reader reader) throws SQLException, ParseException {
+        Iterator<SqlStatement> sourceIterator = SQLParserManager.parseScript(reader);
 
-		return result;
-	}
-
-	private void executeScript(Reader reader) throws SQLException, ParseException {
-		Iterator<Statement> sourceIterator = SQLParserManager.parseScript(reader);
-
-		// conversion and execution
-        Iterator<Statement> it = H2Converter.convertScript(sourceIterator);
+        // conversion and execution
+        Iterator<SqlStatement> it = H2Converter.convertScript(sourceIterator);
         while (it.hasNext()) {
-            Statement st = it.next();
-			executeUpdate(st.toString());
-		}
-	}
+            SqlStatement st = it.next();
+            executeUpdate(st.toString());
+        }
+    }
 
-	@Test
-	public void testStringEscaping() throws Exception {
-		String strValue1 = "string with escaping '' \\' \\\\ \\n \\t";
-		String strResult1 = "string with escaping ' ' \\ \n \t";
+    @Test
+    public void testStringEscaping() throws Exception {
+        String strValue1 = "string with escaping '' \\' \\\\ \\n \\t";
+        String strResult1 = "string with escaping ' ' \\ \n \t";
 
-		String strValue2 = "string with no escaping";
-		String strResult2 = strValue2;
+        String strValue2 = "string with no escaping";
+        String strResult2 = strValue2;
 
-		String sql = "CREATE TABLE test (str1 VARCHAR(255), str2 VARCHAR(255)); \n" +
-				"INSERT INTO test VALUES ('" + strValue1 + "','" + strValue2 + "');\n";
+        String sql = "CREATE TABLE test (str1 VARCHAR(255), str2 VARCHAR(255)); \n" +
+                "INSERT INTO test VALUES ('" + strValue1 + "','" + strValue2 + "');\n";
 
-		executeScript(new StringReader(sql));
+        executeScript(new StringReader(sql));
 
-		// check inserted string
-		List<Map<String, Object>> result = executeSelect("SELECT * FROM test");
+        // check inserted string
+        List<Map<String, Object>> result = executeSelect("SELECT * FROM test");
 
-		assertTrue(result.size() == 1);
-		assertEquals(result.get(0).get("STR1"), strResult1);
-		assertEquals(result.get(0).get("STR2"), strResult2);
-	}
+        assertTrue(result.size() == 1);
+        assertEquals(result.get(0).get("STR1"), strResult1);
+        assertEquals(result.get(0).get("STR2"), strResult2);
+    }
 
     @Test
     public void testScript1() throws Exception {

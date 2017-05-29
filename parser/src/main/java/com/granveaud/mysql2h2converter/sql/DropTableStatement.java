@@ -1,16 +1,16 @@
 package com.granveaud.mysql2h2converter.sql;
 
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Joiner;
 
 /*
 DROP [TEMPORARY] TABLE [IF EXISTS]
 tbl_name [, tbl_name] ...
  */
 
-public class DropTableStatement implements Statement {
+public class DropTableStatement implements SqlStatement {
     private boolean temporary, ifExists;
     private List<String> tableNames;
 
@@ -38,6 +38,6 @@ public class DropTableStatement implements Statement {
         }
 
         return "DROP " + (temporary ? "TEMPORARY " : "") + "TABLE " + (ifExists ? "IF EXISTS " : "") +
-                Joiner.on(',').join(tableNewNames);
+                joinList(tableNewNames, ",");
     }
 }

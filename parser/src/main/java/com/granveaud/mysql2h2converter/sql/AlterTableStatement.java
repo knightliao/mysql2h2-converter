@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -40,19 +40,19 @@ alter_specification:
  */
 
 // TODO: implement complete ALTER TABLE statement
-public class AlterTableStatement implements Statement {
+public class AlterTableStatement implements SqlStatement {
     private boolean ignore;
     private String tableName;
-	private List<AlterTableSpecification> specifications;
+    private List<AlterTableSpecification> specifications;
 
-	public AlterTableStatement(boolean ignore, String tableName, List<AlterTableSpecification> specifications) {
-		this.ignore = ignore;
-		this.tableName = tableName;
-		this.specifications = specifications;
-	}
+    public AlterTableStatement(boolean ignore, String tableName, List<AlterTableSpecification> specifications) {
+        this.ignore = ignore;
+        this.tableName = tableName;
+        this.specifications = specifications;
+    }
 
-	@Override
+    @Override
     public String toString() {
-        return "ALTER" + (ignore ? " IGNORE" : "") + " TABLE " + tableName + " " + Joiner.on(',').join(specifications);
+        return "ALTER" + (ignore ? " IGNORE" : "") + " TABLE " + tableName + " " + joinList(specifications, ",");
     }
 }

@@ -1,6 +1,6 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import com.google.common.base.Joiner;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class ColumnReference {
     @Override
     public String toString() {
         return "REFERENCES " + tableName +
-                (columnNames != null ? " (" + Joiner.on(',').join(columnNames) + ")" : "") +
+                (columnNames != null ? " (" + joinList(columnNames, ",") + ")" : "") +
                 (matchFull ? " MATCH FULL" : "") +
                 (matchPartial ? " MATCH PARTIAL" : "") +
                 (onDeleteOption != null ? " ON DELETE " + onDeleteOption : "") +

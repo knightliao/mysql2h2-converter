@@ -1,8 +1,8 @@
 package com.granveaud.mysql2h2converter.sql;
 
-import java.util.List;
+import static com.granveaud.mysql2h2converter.util.CollectionUtils.joinList;
 
-import com.google.common.base.Joiner;
+import java.util.List;
 
 /*
 CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
@@ -98,7 +98,7 @@ table_option:
 select_statement:
     [IGNORE | REPLACE] [AS] SELECT ...   (Some legal select statement)
  */
-public class CreateTableStatement implements Statement {
+public class CreateTableStatement implements SqlStatement {
     private boolean temporary, ifNotExists;
     private String tableName;
     private CreateTableDefinition definition;
@@ -131,6 +131,10 @@ public class CreateTableStatement implements Statement {
         return definition;
     }
 
+    public List<CreateTableOption> getOptions() {
+        return options;
+    }
+
     public void setOptions(List<CreateTableOption> options) {
         this.options = options;
     }
@@ -150,7 +154,7 @@ public class CreateTableStatement implements Statement {
                 (definition != null ? " "
                         + "(" +
                         definition + ")" : "") +
-                (options != null ? " " + Joiner.on(' ').join(options) : "")
+                (options != null ? " " + joinList(options, " ") : "")
                 //                (selectStatement != null ? selectStatement.toString() : "")
                 ;
     }
