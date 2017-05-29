@@ -53,6 +53,9 @@ public class SQLParserManager {
         return parser.Statement();
     }
 
+    /**
+     * Reads from the supplied Reader and parses the MySQL script contained therein.
+     */
     public static Iterator<SqlStatement> parseScript(Reader reader) throws ParseException {
         SQLParser parser = new SQLParser(new ReaderProvider(reader));
         return new ScriptIterator(parser);

@@ -248,6 +248,13 @@ public class H2Converter {
         }
     }
 
+    /**
+     * Transforms the supplied Iterator of parsed MySQL statements and supplies H2-compatible
+     * converted forms when possible. SET and UPDATE statements are not implemented, and not
+     * all converted statements provide the same information as their MySQL equivalents. When
+     * possible this library emits warning log statements when information is lost in a
+     * conversion.
+     */
     public static Iterator<SqlStatement> convertScript(Iterator<SqlStatement> sourceIterator) {
         return new ConverterIterator(sourceIterator);
     }
